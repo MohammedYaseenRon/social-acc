@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Youtube = () => {
+const page = () => {
   return (
     <div>page</div>
   )
 }
 
-export default Youtube
+export default page

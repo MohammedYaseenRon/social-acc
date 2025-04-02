@@ -60,7 +60,7 @@ const AppSidebar = () => {
   const handleMouseEnter = () => setIsOpen(true);
   const handleMouseLeave = () => setIsOpen(false);
   return (
-    <Sidebar className={cn("fixed inset-0 left-0 z-50 transition-all duration-300 ease-in-out", isOpen ? "w-64" : "w-16")}
+    <Sidebar className={cn("fixed inset-0 left-0 z-50 transition-all duration-300 ease-in-out", isOpen ? "10rem" : "w-16")}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       collapsible="icon"
