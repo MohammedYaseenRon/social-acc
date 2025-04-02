@@ -39,8 +39,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     }
 
     const menuItems = [
-        { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-        { path: '/products', label: 'Products', icon: <Package size={20} /> },
+        { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+        { path: '/admin/products', label: 'Products', icon: <Package size={20} /> },
         { path: '/orders', label: 'Orders', icon: <ShoppingCart size={20} /> },
         { path: '/customers', label: 'Customers', icon: <Users size={20} /> },
         { path: '/vendors', label: 'Vendors', icon: <Store size={20} /> },
