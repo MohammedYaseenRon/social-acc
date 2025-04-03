@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Package, Plus, Filter, Search, Edit, Trash2, MoreHorizontal, Download, Eye,FileText,Film,Image,Music,Code } from 'lucide-react';
+import Link from 'next/link';
 
 const mockProducts = [
     {
@@ -130,18 +131,18 @@ const ProductPage = () => {
                     <p className='text-base font-medium text-gray-400'>Manage your digital products</p>
                 </motion.div>
                 <div>
-                    <motion.button
+                    <Link href="/admin/products/add"><motion.button
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className='bg-blue-500 text-white px-4 py-2 flex items-center gap-2 rounded-md hover:bg-blue-600 transition duration-200'>
+                        className='bg-blue-500 text-white px-4 py-2 cursor-pointer flex items-center gap-2 rounded-md hover:bg-blue-600 transition duration-200'>
 
                         <Plus className='mr-2' size={16} />
                         Add New Product
 
-                    </motion.button>
+                    </motion.button></Link>
                 </div>
             </div>
             <motion.div
