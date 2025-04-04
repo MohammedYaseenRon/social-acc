@@ -49,19 +49,19 @@ const Navbar = () => {
                     <div className="flex items-center gap-12">
                         {/* Support */}
                         <div className="flex items-center gap-2">
-                            <Phone size={30} />
+                            <Phone size={20} />
                             <div>
-                                <h2 className="text-xl">24 <span className="text-blue-600">Support</span></h2>
-                                <p className="text-blue-600 text-lg">+91-9080890059</p>
+                                <h2 className="text-base">24 <span className="text-blue-600">Support</span></h2>
+                                <p className="text-blue-600 text-base">+91-9080890059</p>
                             </div>
                         </div>
 
                         {/* Worldwide Service */}
                         <div className="flex items-center gap-2">
-                            <Earth size={30} />
+                            <Earth size={20} />
                             <div>
-                                <h2 className="text-xl text-gray-600">Worldwide</h2>
-                                <p className="font-medium text-blue-600 text-lg">Services</p>
+                                <h2 className="text-base text-gray-600">Worldwide</h2>
+                                <p className="font-medium text-blue-600 text-base">Services</p>
                             </div>
                         </div>
                     </div>

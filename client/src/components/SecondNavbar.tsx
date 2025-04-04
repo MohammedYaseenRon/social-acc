@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Earth, Menu, Phone, SearchIcon, User, Facebook, Twitter, Mail, Linkedin, Send, RefreshCw, Heart, ShoppingCart } from "lucide-react";
 import { FaPinterestP, FaWhatsapp } from "react-icons/fa";
 import { Button } from './ui/button';
+import Link from 'next/link';
 
 const SecondNavbar = () => {
     const [isHovered, setIsHovered] = useState<string | null>(null)
@@ -107,7 +108,7 @@ const SecondNavbar = () => {
 
                     {/* Profile Icon */}
                     <div className="relative bg-white p-2 rounded-full shadow-md cursor-pointer">
-                        <User size={20} className="text-gray-600" />
+                        <Link href="/auth/register"><User size={20} className="text-gray-600" /></Link>
                     </div>
 
                     {/* Compare Icon with Badge */}

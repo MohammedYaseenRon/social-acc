@@ -21,11 +21,18 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+type MenuItem = {
+    path: string;
+    label: string;
+    icon: React.ReactNode;
+};
+
 type SidebarProps = {
     className?: string
+    menuItems: MenuItem[]
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ className }) => {
+const Sidebar: React.FC<SidebarProps> = ({ className,menuItems}) => {
     const [collapsed, setCollapsed] = useState(false);
 
     const sideBarVariants = {
@@ -38,17 +45,17 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         }
     }
 
-    const menuItems = [
-        { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-        { path: '/admin/products', label: 'Products', icon: <Package size={20} /> },
-        { path: '/orders', label: 'Orders', icon: <ShoppingCart size={20} /> },
-        { path: '/customers', label: 'Customers', icon: <Users size={20} /> },
-        { path: '/vendors', label: 'Vendors', icon: <Store size={20} /> },
-        { path: '/analytics', label: 'Analytics', icon: <BarChart4 size={20} /> },
-        { path: '/finances', label: 'Finances', icon: <Wallet size={20} /> },
-        { path: '/messages', label: 'Messages', icon: <MessageSquare size={20} /> },
-        { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
-    ];
+    // const menuItems = [
+    //     { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+    //     { path: '/admin/products', label: 'Products', icon: <Package size={20} /> },
+    //     { path: '/orders', label: 'Orders', icon: <ShoppingCart size={20} /> },
+    //     { path: '/customers', label: 'Customers', icon: <Users size={20} /> },
+    //     { path: '/vendors', label: 'Vendors', icon: <Store size={20} /> },
+    //     { path: '/analytics', label: 'Analytics', icon: <BarChart4 size={20} /> },
+    //     { path: '/finances', label: 'Finances', icon: <Wallet size={20} /> },
+    //     { path: '/messages', label: 'Messages', icon: <MessageSquare size={20} /> },
+    //     { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
+    // ];
     return (
         <motion.div
             className={cn("h-screen flex flex-col bg-black text-white shadow-lg", className)}

@@ -150,7 +150,7 @@ const ProductPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
                 className="bg-white rounded-xl shadow-sm border border-border mb-6 p-4">
-                <div className='flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0'>
+                <div className='flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0 overflow-x-auto'>
                     <div className='w-full relative md:w-80'>
                         <input
                             type="text"
@@ -302,10 +302,10 @@ const ProductPage = () => {
                 </div>
 
                 <div className="px-6 py-4 border-t border-gray-200">
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col md:flex-row gap-2 justify-between items-center">
                         <div className="text-sm text-gray-500">
                             Showing <span className="font-medium">1</span> to <span className="font-medium">6</span> of <span className="font-medium">12</span> products
-                        </div>
+                        </div> 
 
                         <div className="flex space-x-2">
                             <button className="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50 disabled:opacity-50" disabled>

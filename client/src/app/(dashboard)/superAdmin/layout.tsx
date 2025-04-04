@@ -7,25 +7,16 @@ import {
     LayoutDashboard,
     ShoppingCart,
     Users,
-    Package,
     Settings,
-    Wallet,
-    MessageSquare,
-    BarChart4,
-    Store,
+    User,
+
 } from 'lucide-react';
 
 const menu = [
-        { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-        { path: '/admin/products', label: 'Products', icon: <Package size={20} /> },
-        { path: '/orders', label: 'Orders', icon: <ShoppingCart size={20} /> },
-        { path: '/customers', label: 'Customers', icon: <Users size={20} /> },
-        { path: '/vendors', label: 'Vendors', icon: <Store size={20} /> },
-        { path: '/analytics', label: 'Analytics', icon: <BarChart4 size={20} /> },
-        { path: '/finances', label: 'Finances', icon: <Wallet size={20} /> },
-        { path: '/messages', label: 'Messages', icon: <MessageSquare size={20} /> },
-        { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
-    ];
+    { path: '/superAdmin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+    { path: '/superAdmin', label: 'Products', icon: <User size={20} /> },
+    { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
+];
 
 const layout: React.FC<{ children: ReactNode }> = ({ children }) => {
     return (

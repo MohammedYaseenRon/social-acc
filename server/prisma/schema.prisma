@@ -25,12 +25,22 @@ model User {
   updatedAt     DateTime       @updatedAt
   vendor        Vendor?
   vendorRequest VendorRequest?
-  cart          Cart?
+  cart          Cart? 
   orders        Order[]
   payments      Payment[]
   reviews       Review[]
   wishList      WishList[]
+  resetPasswordToken ResetPasswordToken[]
   
+}
+model ResetPasswordToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  used    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 model VendorRequest {
@@ -109,7 +119,7 @@ model OrderItem {
 model Cart {
   id        Int        @id @default(autoincrement())
   userId    Int        @unique
-  user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
   createdAt DateTime   @default(now())
 }
@@ -117,10 +127,12 @@ model Cart {
 model CartItem {
   id        Int     @id @default(autoincrement())
   cartId    Int
-  cart      Cart    @relation(fields: [cartId], references: [id])
+  cart      Cart    @relation(fields: [cartId], references: [id],onDelete: Cascade)
   productId Int
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id],onDelete: Cascade)
   quantity  Int     @default(1)
+
+  @@unique([productId,cartId])
 }
 
 model Payment {
