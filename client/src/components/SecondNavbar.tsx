@@ -108,7 +108,7 @@ const SecondNavbar = () => {
 
                     {/* Profile Icon */}
                     <div className="relative bg-white p-2 rounded-full shadow-md cursor-pointer">
-                        <Link href="/auth/register"><User size={20} className="text-gray-600" /></Link>
+                        <Link href="/auth/signup"><User size={20} className="text-gray-600" /></Link>
                     </div>
 
                     {/* Compare Icon with Badge */}

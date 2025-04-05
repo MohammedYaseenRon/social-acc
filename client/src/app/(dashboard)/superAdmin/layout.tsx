@@ -14,8 +14,8 @@ import {
 
 const menu = [
     { path: '/superAdmin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-    { path: '/superAdmin', label: 'Products', icon: <User size={20} /> },
-    { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
+    { path: '/superAdmin/approve', label: 'Approve', icon: <User size={20} /> },
+    { path: '/superAdmin/setting', label: 'Settings', icon: <Settings size={20} /> },
 ];
 
 const layout: React.FC<{ children: ReactNode }> = ({ children }) => {
