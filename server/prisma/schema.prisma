@@ -14,32 +14,32 @@ datasource db {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  name          String
-  email         String         @unique
-  password      String
-  role          Role
-  address       String?
-  phone         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  vendor        Vendor?
-  vendorRequest VendorRequest?
-  cart          Cart? 
-  orders        Order[]
-  payments      Payment[]
-  reviews       Review[]
-  wishList      WishList[]
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  email              String               @unique
+  password           String
+  role               Role
+  address            String?
+  phone              String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  vendor             Vendor?
+  vendorRequest      VendorRequest?
+  cart               Cart?
+  orders             Order[]
+  payments           Payment[]
+  reviews            Review[]
+  wishList           WishList[]
   resetPasswordToken ResetPasswordToken[]
-  
 }
+
 model ResetPasswordToken {
   id        Int      @id @default(autoincrement())
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   token     String   @unique
   expiresAt DateTime
-  used    Boolean  @default(false)
+  used      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
@@ -60,24 +60,25 @@ model Vendor {
   storeDescription String?
   logo             String?
   isActive         Boolean   @default(false)
-  products         Product[]
+  // products         Product[]
   Order            Order[]
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
   description String?
   price       Float
   sku         String
-  stock       Int         @default(0)
+  stock       Int           @default(0)
   images      String[]
-  isActive    Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  vendorId    Int?
-  Vendor      Vendor?     @relation(fields: [vendorId], references: [id])
+  isActive    Boolean       @default(true)
+  status      ProductStatus @default(INSTOCK)
+  createdAt   DateTime      @default(now())
+  // vendorId    Int?
+  // Vendor      Vendor?       @relation(fields: [vendorId], references: [id])
   categoryId  Int?
-  Category    Category?   @relation(fields: [categoryId], references: [id])
+  Category    Category?     @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]
   cartItems   CartItem[]
   reviews     Review[]
@@ -86,7 +87,7 @@ model Product {
 
 model Category {
   id          Int       @id @default(autoincrement())
-  name        String
+  name        String    @unique
   description String?
   createdAt   DateTime  @default(now())
   products    Product[]
@@ -127,12 +128,12 @@ model Cart {
 model CartItem {
   id        Int     @id @default(autoincrement())
   cartId    Int
-  cart      Cart    @relation(fields: [cartId], references: [id],onDelete: Cascade)
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId Int
-  product   Product @relation(fields: [productId], references: [id],onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int     @default(1)
 
-  @@unique([productId,cartId])
+  @@unique([productId, cartId])
 }
 
 model Payment {
@@ -147,6 +148,7 @@ model Payment {
   paymentStatus PaymentStatus
   createdAt     DateTime      @default(now())
 }
+
 model Review {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -157,6 +159,7 @@ model Review {
   comment   String?
   createdAt DateTime @default(now())
 }
+
 model WishList {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -171,6 +174,11 @@ enum PaymentMethod {
   DEBIT_CARD
   PAYPAL
   STRIPE
+}
+
+enum ProductStatus {
+  INSTOCK
+  OUT_OF_STOCK
 }
 
 enum PaymentStatus {

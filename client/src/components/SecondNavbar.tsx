@@ -10,7 +10,7 @@ const SecondNavbar = () => {
 
 
     return (
-        <div className='pl-18'>
+        <div>
             <div className='flex justify-between items-center gap-2 mt-8 w-full bg-blue-100 h-16 p-2'>
                 <div className='relative'>
                     <Menu className='absolute top-3 left-2 text-blue-600' />
@@ -24,7 +24,7 @@ const SecondNavbar = () => {
 
                     {/* Our Product Dropdown */}
                     <div
-                        className="relative"
+                        className="relative z-20"
                         onMouseEnter={() => setIsHovered("our-product")}
                         onMouseLeave={() => setIsHovered(null)}
                     >
@@ -47,7 +47,7 @@ const SecondNavbar = () => {
 
                     {/* Pages Dropdown */}
                     <div
-                        className="relative"
+                        className="relative z-20"
                         onMouseEnter={() => setIsHovered("pages")}
                         onMouseLeave={() => setIsHovered(null)}
                     >
@@ -67,7 +67,7 @@ const SecondNavbar = () => {
 
                     {/* My Account Dropdown */}
                     <div
-                        className="relative"
+                        className="relative z-20"
                         onMouseEnter={() => setIsHovered("account")}
                         onMouseLeave={() => setIsHovered(null)}
                     >

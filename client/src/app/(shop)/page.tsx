@@ -1,4 +1,4 @@
-import ProductGrid from '@/components/ProductCard'
+// import ProductGrid from '@/components/ProductCard'
 import React from 'react'
 
 const page = () => {
@@ -8,7 +8,7 @@ const page = () => {
             <h1 className='text-3xl font-bold'>Welcome to the Shop</h1>
             <p className='mt-4 text-lg'>Explore our collection of products</p>
         </div>
-        <ProductGrid />
+        {/* <ProductGrid /> */}
     </div>
   )
 }

@@ -9,7 +9,7 @@ export interface PriceRangeSelectorProps {
 export interface ProductCardProps {
     title: string;
     price: number;
-    source: string;
+    category: string;
     followers:string;
     sku: string;
     status?: 'in-stock' | 'out-of-stock';

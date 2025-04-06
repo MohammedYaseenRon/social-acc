@@ -1,17 +1,20 @@
 import { ProductCardProps } from '@/state/types'
+import { Star, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react'
 
-const ProductCard: React.FC<ProductCardProps> = ({
+export const ProductCard: React.FC<ProductCardProps> = ({
     title,
     price,
-    source,
+    category,
     followers,
     sku,
     status = "out-of-stock",
-    imageUrl
+    imageUrl = "/api/placeholder/300/300"
 }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [rating, setRating] = useState(0);
+    
     const formatedPrice = (price: number): string => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -21,95 +24,71 @@ const ProductCard: React.FC<ProductCardProps> = ({
         }).format(price);
     }
 
-
     return (
-        <div className='w-full p-4 bg-white border border-gray-300 rounded-lg shadow-md overflow-hidden'>
-            <div className='p-2'>
+        <div className='w-full h-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1'>
+            <div className='relative h-36 overflow-hidden bg-gray-100'>
                 <Image
                     src={imageUrl}
-                    alt='Image'
-                    width={100}
-                    height={100}
-                    className='rounded-xl'
+                    alt={title}
+                    layout="fill"
+                    objectFit="cover"
+                    className='transition-transform duration-300 hover:scale-105'
                 />
+                <div className={`absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-medium ${status === 'in-stock' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {status === 'in-stock' ? 'In stock' : 'Out of stock'}
+                </div>
+                <div className='absolute top-3 left-3 px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium'>
+                    {category}
+                </div>
             </div>
-            <div className="p-4 pt-8">
-                <h5 className="text-sm font-medium text-gray-600 mb-2">{source}</h5>
-                <h3 className="text-base font-semibold text-gray-800 mb-2">{title}</h3>
-
-                <div className="flex items-center justify-between mb-2">
-                    <div className={`${status === 'in-stock' ? 'text-green-500' : 'text-red-500'}`}>
-                        {status === 'in-stock' ? 'In stock' : 'Out of stock'}
+            
+            <div className="p-3 sm:p-4 space-y-2">
+                <div className="">
+                    <h3 className="text-sm sm:text-md font-semibold text-gray-800 line-clamp-2">{title}</h3>
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-600">
+                        <span>{followers}</span>
+                        <span className="text-xs">followers</span>
                     </div>
-                    <div className="text-gray-500 text-sm">{followers} Followers</div>
+                </div>
+                
+                <div className='flex items-center gap-1'>
+                    {[1,2,3,4,5].map((_, index) => (
+                        <Star 
+                            key={index} 
+                            size={16} 
+                            fill={index < rating ? "#FBBF24" : "none"} 
+                            className={`cursor-pointer transition-colors ${index < rating ? 'text-yellow-400' : 'text-gray-300'}`} 
+                            onClick={() => setRating(index + 1)} 
+                        />
+                    ))}
+                    <span className="text-xs sm:text-sm text-gray-500 ml-1 sm:ml-2">
+                        {rating > 0 ? `${rating}/5` : 'Rate this'}
+                    </span>
                 </div>
 
-                <div className="text-2xl font-bold text-blue-600 mb-4">
+                <div className="text-base sm:text-lg font-bold text-blue-600">
                     {formatedPrice(price)}
                 </div>
 
-                <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
-                    Add To Cart
+                <button 
+                    className="w-full bg-blue-600 text-white py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-medium transition-all duration-300 hover:bg-blue-700 flex items-center justify-center gap-2 group"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    {isHovered ? (
+                        <>
+                            <ShoppingCart size={18} className="animate-bounce" />
+                            <span>Add To Cart</span>
+                        </>
+                    ) : (
+                        <span>Add To Cart</span>
+                    )}
                 </button>
 
-                <div className="text-xs text-gray-500 mt-2">
-                    SKU: {sku}
+                <div className="text-xs text-gray-500 pt-2 sm:pt-4 border-t border-gray-100">
+                    SKU: <span className="font-mono">{sku}</span>
                 </div>
             </div>
         </div>
     )
 };
-
-const ProductGrid: React.FC = () => {
-    const products: ProductCardProps[] = [
-      {
-        title: "1 Payment Received Hindi",
-        price: 14999.00,
-        source: "YouTube",
-        followers:"14k",
-        sku: "011-1-2",
-        status: "out-of-stock"
-      },
-      {
-        title: "2 Payment Received English",
-        price: 19999.00,
-        source: "Spotify",
-        followers:"14k",
-        sku: "022-2-3",
-        status: "in-stock"
-      },
-      {
-        title: "3 Payment Received Tamil",
-        price: 12999.00,
-        source: "Amazon",
-        followers:"14k",
-        sku: "033-3-4",
-        status: "out-of-stock"
-      },
-      {
-        title: "4 Payment Received Telugu",
-        price: 16999.00,
-        source: "Netflix",
-        followers:"14k",
-        sku: "044-4-5",
-        status: "in-stock"
-      }
-    ];
-
-    return (
-        <div className='mt-4'>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-4'>
-                {products.map((product,index) => (
-                    <ProductCard
-                        key={index}
-                        {...product}
-                        
-                    />
-                ))}
-            </div>
-        </div>
-    )
-}
-  
-
-export default ProductGrid

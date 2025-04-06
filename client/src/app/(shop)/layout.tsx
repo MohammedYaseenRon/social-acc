@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
+import SecondNavbar from "@/components/SecondNavbar";
 
 const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
@@ -12,8 +13,9 @@ const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
       <div className="min-h-screen w-full">
         <AppSidebar />
 
-        <div className="w-full min-h-screen flex flex-col pl-16">
+        <div className="w-full min-h-screen flex flex-col pl-0 lg:pl-16">
           <Navbar />
+          <SecondNavbar />
           <motion.main
             className="flex-1 p-4"
             initial={{ opacity: 0 }}

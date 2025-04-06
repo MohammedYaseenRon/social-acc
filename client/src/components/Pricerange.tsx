@@ -26,7 +26,7 @@ const Pricerange: React.FC<PriceRangeSelectorProps> = ({
         setPriceRange(values);
     }
     return (
-        <div className='max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg'>
+        <div className='max-w-xs p-6 bg-white shadow-lg rounded-lg'>
             <h2 className='text-lg text-black font-medium'>Filter by Price</h2>
             <div className='flex justify-between mb-4'>
                 <div className='bg-gray-100 text-black rounded-lg p-2'>
