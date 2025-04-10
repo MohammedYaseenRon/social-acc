@@ -69,9 +69,12 @@ export default function Signup() {
 
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, formData);
-            setFormData({ name: '', email: '', password: '' });
-            const { token, user } = response.data;
-            localStorage.setItem('token', token);
+            if(response.status === 201) {
+                const { token, user } = response.data;
+                localStorage.setItem('token', token);
+                setFormData({ name: '', email: '', password: '' });
+                router.push("/");
+            }
             
         } catch (error: unknown) {
             if (error instanceof Error) {

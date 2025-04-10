@@ -125,117 +125,202 @@ const Addpage: React.FC<AddpageProps> = () => {
   }
 
   return (
-    <div className='p-6 space-y-4 border border-gray-200 bg-white shadow-md rounded-lg'>
-      <h1 className='text-2xl font-bold'>Add New Product</h1>
-      <form onSubmit={handleSubmit} className='space-y-4'>
-        <div className='space-y-2'>
-          <label htmlFor="name" className='text-sm font-medium'>Product Title</label>
+    <div className="bg-white rounded-lg shadow-sm p-8">
+      <div className="flex items-center mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800">Add New Product</h1>
+        <span className="ml-3 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          New
+        </span>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Product Title */}
+        <div className="space-y-2">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Product Title <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             id="name"
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className='w-full p-2 border border-gray-300 rounded'
-            placeholder='Enter product title' />
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter product title"
+          />
         </div>
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-          <div className='space-y-2'>
-            <label htmlFor='category' className='text-sm font-medium'>Category</label>
-            <select className='w-full p-2 border border-gray-300 rounded' id='category' name='category' value={formData.category} onChange={handleInputChange}>
-              <option value="">Select Category</option>
-              {categories?.map((category, index) => (
-                <option key={index} value={category.name}>{category.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className='space-y-2'>
-            <label htmlFor='status' className='text-sm font-medium'>Status</label>
-            <select className='w-full p-2 border border-gray-300 rounded' id='status' name='status' value={formData.status} onChange={handleInputChange}>
-              <option value="">Select Status</option>
-              <option value="INSTOCK">In stock</option>
-              <option value="OUT_OF_STOCK">Out of Stock</option>
-            </select>
-          </div>
-        </div>
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-          <div className='space-y-2'>
-            <label htmlFor='price' className='text-sm font-medium'>Price(INR)</label>
-            <input
-              id="price"
-              name='price'
-              type="number"
-              placeholder='Price'
-              value={formData.price}
-              onChange={handleInputChange}
-              className='w-full p-2 border border-gray-300 rounded'
 
-            />
-          </div>
-          <div className='space-y-2'>
-            <label htmlFor='category' className='text-sm font-medium'>Image</label>
-            <input
-              type='file'
-              id='image'
-              name='image'
-              accept='image/*'
-              multiple
-              value={formData.image}
-              onChange={handleImageSelect}
-              className='w-full p-2 border border-gray-300 rounded cursor-pointer'
-            />
-          </div>
-          {images.length > 0 && (
-            <div className='mt-4'>
-              <div className="flex gap-4 flex-wrap">
-                {images.map((image, index) => (
-                  <div key={index} className="relative">
-                    <img src={image} alt="preview" className="h-24 w-24 object-cover rounded-md border" />
-                    <button
-                      type="button"
-                      className="absolute -top-2 -right-2 bg-red-500 cursor-pointer text-white rounded-full p-1"
-                      onClick={() => removeImage(index)}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
+        {/* Category and Status in a grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+              Category <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select Category</option>
+                {categories?.map((category, index) => (
+                  <option key={index} value={category.name}>
+                    {category.name}
+                  </option>
                 ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
               </div>
             </div>
-          )}
+          </div>
 
+          <div className="space-y-2">
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+              Status <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select Status</option>
+                <option value="INSTOCK">In stock</option>
+                <option value="OUT_OF_STOCK">Out of Stock</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-          <div className='space-y-2'>
-            <label htmlFor='stock' className='text-sm font-medium'>Stock</label>
+
+        {/* Price and Image Upload */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+              Price (INR) <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <span className="text-gray-500">₹</span>
+              </div>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="0"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+              Image
+            </label>
+            <div className="border border-dashed border-gray-300 rounded-lg bg-gray-50">
+              <input
+                type="file"
+                id="image"
+                name="image"
+                accept="image/*"
+                multiple
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+              <label
+                htmlFor="image"
+                className="flex flex-col items-center justify-center w-full h-10 cursor-pointer"
+              >
+                <svg className="w-8 h-8 text-gray-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-xs text-gray-500">Click to upload images</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Image Preview */}
+        {images.length > 0 && (
+          <div className="mt-4">
+            <div className="flex gap-3 flex-wrap">
+              {images.map((image, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={image}
+                    alt="preview"
+                    className="h-20 w-20 object-cover rounded-md border border-gray-200"
+                  />
+                  <button
+                    type="button"
+                    className="absolute -top-2 -right-2 bg-white border border-gray-200 text-gray-600 rounded-full p-1 shadow-sm hover:bg-gray-100"
+                    onClick={() => removeImage(index)}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Stock and SKU */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label htmlFor="stock" className="block text-sm font-medium text-gray-700">
+              Stock <span className="text-red-500">*</span>
+            </label>
             <input
-              type='number'
-              id='stock'
-              name='stock'
+              type="number"
+              id="stock"
+              name="stock"
               value={formData.stock}
               onChange={handleInputChange}
-              placeholder='Enter stock quantity'
-              className='w-full p-2 border border-gray-300 rounded'
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="0"
             />
           </div>
-          <div className='space-y-2'>
-            <label htmlFor='sku' className='text-sm font-medium'>Sku</label>
+
+          <div className="space-y-2">
+            <label htmlFor="sku" className="block text-sm font-medium text-gray-700">
+              SKU
+            </label>
             <input
-              type='text'
-              id='sku'
-              name='sku'
+              type="text"
+              id="sku"
+              name="sku"
               value={formData.sku}
               onChange={handleInputChange}
-              placeholder='Enter SKU'
-              className='w-full p-2 border border-gray-300 rounded'
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter SKU"
             />
           </div>
         </div>
-        <div>
-          <Button
+
+        {/* Create Product Button */}
+        <div className="pt-4">
+          <button
             type="submit"
-            className='w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200'
-          >Create Product</Button>
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center justify-center transition-colors"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Create Product
+          </button>
         </div>
       </form>
     </div>

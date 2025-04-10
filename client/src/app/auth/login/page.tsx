@@ -30,7 +30,7 @@ export default function Signup() {
     const router = useRouter();
 
     useEffect(() => {
-        setFormData({email: "", password: "" });
+        setFormData({ email: "", password: "" });
     }, []);
 
     const handleChange = (name: string, value: string) => {
@@ -63,10 +63,20 @@ export default function Signup() {
 
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, formData);
-            setFormData({ email: '', password: '' });
-            const { token, user } = response.data;
-            localStorage.setItem('token', token);
-            
+            if (response.status == 200) {
+                setFormData({ email: '', password: '' });
+                const { token, user } = response.data;
+                localStorage.setItem('token', token);
+                
+                if(user.role == "ADMIN") {
+                    router.push("/superAdmin");
+                }else if(user.role == "VENDOR") {
+                    router.push("/admin");
+                }else{
+                    router.push("/")
+                }
+            }
+
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error("Error during signup", error.message);
@@ -86,7 +96,7 @@ export default function Signup() {
             <Card className="w-full max-w-md shadow-xl rounded-3xl border border-gray-100 bg-white/90 backdrop-blur-md p-6 transition-all hover:shadow-2xl">
                 <CardHeader className="relative">
                     <CardTitle className="text-4xl font-semibold text-center text-gray-800 tracking-tight">
-                      Login
+                        Login
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="mt-2">

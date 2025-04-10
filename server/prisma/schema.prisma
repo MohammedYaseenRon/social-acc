@@ -60,7 +60,7 @@ model Vendor {
   storeDescription String?
   logo             String?
   isActive         Boolean   @default(false)
-  // products         Product[]
+  products         Product[]
   Order            Order[]
 }
 
@@ -75,8 +75,8 @@ model Product {
   isActive    Boolean       @default(true)
   status      ProductStatus @default(INSTOCK)
   createdAt   DateTime      @default(now())
-  // vendorId    Int?
-  // Vendor      Vendor?       @relation(fields: [vendorId], references: [id])
+  vendorId    Int?
+  Vendor      Vendor?       @relation(fields: [vendorId], references: [id])
   categoryId  Int?
   Category    Category?     @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]

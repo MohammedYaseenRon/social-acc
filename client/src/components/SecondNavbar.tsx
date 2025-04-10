@@ -1,13 +1,13 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Earth, Menu, Phone, SearchIcon, User, Facebook, Twitter, Mail, Linkedin, Send, RefreshCw, Heart, ShoppingCart } from "lucide-react";
 import { FaPinterestP, FaWhatsapp } from "react-icons/fa";
 import { Button } from './ui/button';
 import Link from 'next/link';
+import { time } from 'console';
 
 const SecondNavbar = () => {
-    const [isHovered, setIsHovered] = useState<string | null>(null)
-
+    const [isHovered, setIsHovered] = useState<string | null>(null);
 
     return (
         <div>
@@ -129,11 +129,8 @@ const SecondNavbar = () => {
                         <span className="absolute -top-1 -right-1 bg-white text-blue-600 text-xs w-4 h-4 flex items-center justify-center rounded-full">1</span>
                     </div>
 
-                    {/* Price Text */}
-                    <p className="text-black font-medium">₹4,999.00</p>
-
                 </div>
-
+    
             </div>
         </div>
     )
