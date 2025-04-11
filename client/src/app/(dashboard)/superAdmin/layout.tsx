@@ -1,15 +1,15 @@
 "use client";
+
+import React, { ReactNode, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import Header from '@/components/admin/Header';
 import Sidebar from '@/components/admin/Sidebar';
-import React, { ReactNode } from 'react'
-import { delay, motion } from 'framer-motion'
+import { motion } from 'framer-motion';
 import {
     LayoutDashboard,
-    ShoppingCart,
-    Users,
     Settings,
     User,
-
 } from 'lucide-react';
 
 const menu = [
@@ -18,7 +18,41 @@ const menu = [
     { path: '/superAdmin/setting', label: 'Settings', icon: <Settings size={20} /> },
 ];
 
-const layout: React.FC<{ children: ReactNode }> = ({ children }) => {
+const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [authorized, setAuthorized] = useState<boolean | null>(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            return router.push("/unauthorized");
+        }
+
+        const checkRole = async () => {
+            try {
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (res.data.role === "ADMIN") {
+                    setAuthorized(true);
+                } else {
+                    router.push("/unauthorized");
+                }
+            } catch (err) {
+                router.push("/unauthorized");
+            }
+        };
+
+        checkRole();
+    }, []);
+
+    if (authorized === null) {
+        return <div className="p-4">🔐 Checking access...</div>;
+    }
+
     return (
         <div className='flex h-screen bg-gray-100'>
             <Sidebar menuItems={menu} />
@@ -31,12 +65,10 @@ const layout: React.FC<{ children: ReactNode }> = ({ children }) => {
                     transition={{ delay: 0.1, duration: 0.3 }}
                 >
                     {children}
-
                 </motion.main>
             </div>
-
         </div>
-    )
-}
+    );
+};
 
-export default layout
+export default Layout;

@@ -20,7 +20,7 @@ declare global {
 }
 
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateToken = async (req: Request, res: Response, next: NextFunction)=> {
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) {
     res.status(401).json({ message: "Unauthorized" });
@@ -28,6 +28,16 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: { id: true, role: true },
+    });
+
+    if (!user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
 
     req.user = { id: decoded.userId, role: decoded.role };
     console.log("User authenticated", req.user);
