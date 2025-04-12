@@ -25,7 +25,7 @@ const menu = [
     { path: '/vendors', label: 'Vendors', icon: <Store size={20} /> },
     { path: '/analytics', label: 'Analytics', icon: <BarChart4 size={20} /> },
     { path: '/finances', label: 'Finances', icon: <Wallet size={20} /> },
-    { path: '/messages', label: 'Messages', icon: <MessageSquare size={20} /> },
+    { path: '/admin/profile', label: 'Profile', icon: <MessageSquare size={20} /> },
     { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
 ];
 

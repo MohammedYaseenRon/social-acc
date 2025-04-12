@@ -88,28 +88,54 @@ export const LoginUser = async (req: Request, res: Response): Promise<void> => {
 }
 
 export const getAuthMe = async (req: Request, res: Response): Promise<void> => {
-    try{
+    try {
         const userId = req.user?.id;
 
         const user = await prisma.user.findUnique({
-            where:{
-                id:userId
+            where: {
+                id: userId
             },
-            select:{
-                id:true,
-                name:true,
-                email:true,
-                role:true
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true
             },
         });
-        if(!user) {
+        if (!user) {
             res.status(404).json({ error: "User not found" });
             return;
         }
         res.status(200).json(user);
-    }catch(error){
-        res.status(500).json({message:"Internal server error", error})
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error })
     }
+}
+
+export const getVendorByUserId = async (req: Request, res: Response): Promise<void> => {
+    const userId = parseInt(req.params.userId);
+
+    if (!userId) {
+        res.status(400).json({ message: "User id is required" });
+        return;
+    }
+
+
+    try {
+        const vendor = await prisma.vendor.findUnique({
+            where: {
+                userId
+            },
+        });
+        if (!vendor) {
+            res.status(404).json({ message: "Vendor id is required", vendor });
+        }
+
+        res.status(200).json({ message: "Successfully got vendor id", })
+    } catch (error) {
+        res.status(500).json({ message: 'Error while getting vendor id or Internal server error', error });
+    }
+
 }
 
 export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
@@ -240,27 +266,120 @@ export const updateVendorRequest = async (req: Request, res: Response): Promise<
         return;
     }
 
-    try{
+    try {
         const updateRequest = await prisma.vendorRequest.update({
-            where:{
-                id:parseInt(id)
+            where: {
+                id: parseInt(id)
             },
-            data:{
+            data: {
                 status: RequestStatus.ACCEPTED,
-                updatedAt:new Date(),
+                updatedAt: new Date(),
             },
         });
 
         if (status === "APPROVED") {
             await prisma.user.update({
-              where: { id: updateRequest.userId },
-              data: { role: "VENDOR" },
+                where: { id: updateRequest.userId },
+                data: { role: "VENDOR" },
             });
         }
 
-        res.status(200).json({message: `Request ${status.toLowerCase()} successfully`, updateRequest});
-    }catch(error) {
+        res.status(200).json({ message: `Request ${status.toLowerCase()} successfully`, updateRequest });
+    } catch (error) {
         console.error("Error updating vendor request:", error);
         res.status(500).json("Error while updating status");
+    }
+}
+
+export const updateVendorProfile = async (req: Request, res: Response): Promise<void> => {
+    const { storeName, storeDescription, logo } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+        res.status(400).json({ message: "User ID not found" });
+        return;
+    }
+
+    try {
+        const vendor = await prisma.vendor.findUnique({
+            where: { userId }
+        });
+
+        if (!vendor) {
+            res.status(404).json({ message: "Vendor not found" });
+            return;
+        }
+
+        const updatedVendor = await prisma.vendor.update({
+            where: { userId },
+            data: {
+                storeName,
+                storeDescription,
+                logo
+            }
+        });
+
+        res.status(200).json({ message: "Vendor profile updated successfully", updatedVendor });
+    } catch (error) {
+        console.error("Error updating vendor profile:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const createVendorProfile = async (req: Request, res: Response): Promise<void> => {
+    const { storeName, storeDescription, logo } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+        res.status(400).json({ message: "User ID not found" });
+        return;
+    }
+
+    try {
+        const existingVendor = await prisma.vendor.findUnique({
+            where: { userId }
+        });
+
+        if (existingVendor) {
+            res.status(400).json({ message: "Vendor profile already exists" });
+            return;
+        }
+
+        const newVendor = await prisma.vendor.create({
+            data: {
+                userId,
+                storeName,
+                storeDescription,
+                logo
+            }
+        });
+
+        res.status(201).json({ message: "Vendor profile created successfully", newVendor });
+    } catch (error) {
+        console.error("Error creating vendor profile:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const getVendorProfile =  async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.id;
+
+        const vendor = await prisma.vendor.findUnique({
+            where: {
+                id: userId
+            },
+            include:{
+                products:true,
+                Order:true
+            }
+        });
+        if (!vendor) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+        res.status(200).json(vendor);
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error })
     }
 }

@@ -1,9 +1,7 @@
 "use client"
-
-import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { X } from 'lucide-react';
-import React, { ChangeEvent, use, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 
 interface AddpageProps {
   name: string;
@@ -84,18 +82,20 @@ const Addpage: React.FC<AddpageProps> = () => {
       formDataToSend.append("stock", formData.stock.toString());
       formDataToSend.append("categoryName", formData.category);
       formDataToSend.append("isActive", formData.status === "INSTOCK" ? "true" : "false");
-      // formDataToSend.append("vendorId", "1");
 
+      //images
       selectedFiles.forEach(file => {
         formDataToSend.append("images", file);
       });
 
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/products`,
         formDataToSend,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );

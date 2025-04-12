@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -17,9 +17,12 @@ import {
     ChevronRight,
     HelpCircle,
     UserCircle2,
-    Bell
+    Bell,
+    LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 type MenuItem = {
     path: string;
@@ -31,9 +34,17 @@ type SidebarProps = {
     className?: string
     menuItems: MenuItem[]
 }
+type UserProps = {
+    id: number,
+    name: string,
+    email: string,
+    role: string
+}
 
-const Sidebar: React.FC<SidebarProps> = ({ className,menuItems}) => {
+const Sidebar: React.FC<SidebarProps> = ({ className, menuItems }) => {
     const [collapsed, setCollapsed] = useState(false);
+    const [user, setUser] = useState<UserProps | null>(null);
+    const router = useRouter();
 
     const sideBarVariants = {
         exPanded: {
@@ -44,18 +55,32 @@ const Sidebar: React.FC<SidebarProps> = ({ className,menuItems}) => {
 
         }
     }
+    const handleLogout = () => {
+        // Remove token from local storage
+        localStorage.removeItem("token");
+        router.push("/"); // Change this to your login route
+    };
 
-    // const menuItems = [
-    //     { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-    //     { path: '/admin/products', label: 'Products', icon: <Package size={20} /> },
-    //     { path: '/orders', label: 'Orders', icon: <ShoppingCart size={20} /> },
-    //     { path: '/customers', label: 'Customers', icon: <Users size={20} /> },
-    //     { path: '/vendors', label: 'Vendors', icon: <Store size={20} /> },
-    //     { path: '/analytics', label: 'Analytics', icon: <BarChart4 size={20} /> },
-    //     { path: '/finances', label: 'Finances', icon: <Wallet size={20} /> },
-    //     { path: '/messages', label: 'Messages', icon: <MessageSquare size={20} /> },
-    //     { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
-    // ];
+    useEffect(() => {
+        const fetchUser = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.log("Error while getting your details", error);
+            }
+        }
+        fetchUser();
+    }, []);
+
+
     return (
         <motion.div
             className={cn("h-screen flex flex-col bg-black text-white shadow-lg", className)}
@@ -116,9 +141,18 @@ const Sidebar: React.FC<SidebarProps> = ({ className,menuItems}) => {
                         animate={{ opacity: collapsed ? 0 : 1, display: collapsed ? 'none' : 'block' }}
                         transition={{ duration: 0.2 }}
                     >
-                        <p className="text-sm font-medium truncate">Admin User</p>
-                        <p className="text-xs text-gray-400 truncate">admin@digimarket.com</p>
+                        <p className="text-sm font-medium truncate">{user?.name}</p>
+                        <p className="text-xs text-gray-400 truncate">{user?.email}</p>
                     </motion.div>
+
+                    {/* Logout button */}
+                    <button
+                        onClick={handleLogout}
+                        className="p-2 rounded-full hover:bg-red-700 transition-colors"
+                        title="Logout"
+                    >
+                        <LogOut size={20} />
+                    </button>
                 </div>
             </div>
 
