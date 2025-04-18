@@ -15,3 +15,10 @@ export interface ProductCardProps {
     status?: 'in-stock' | 'out-of-stock';
     imageUrl?: string;
 }
+
+export interface UserProps{
+    id: number,
+    name: string,
+    email: string,
+    role: string
+}
