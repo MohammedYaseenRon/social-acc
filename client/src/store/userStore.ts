@@ -22,7 +22,7 @@ export const useUserStore = create<UserStore>((set) => ({
 
         const token = localStorage.getItem("token");
         if (!token) {
-            set({ loading: false, error: "No token found" })
+            set({ loading: false })
             return
         }
 

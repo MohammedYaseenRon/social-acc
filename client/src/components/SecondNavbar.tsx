@@ -7,18 +7,11 @@ import { Button } from './ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useUserStore } from '@/store/userStore';
 import { useRouter } from 'next/navigation';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 const SecondNavbar = () => {
     const [isHovered, setIsHovered] = useState<string | null>(null);
     const { user, fetchUsers, loading, error, clearUsers } = useUserStore();
     const router = useRouter();
-    const [isOpen, setIsOpen] = useState(false); // For manual testing
     const [isProfileOpen, setIsProfileOpen] = useState(false); // Added for profile dropdown
 
     // Add debug logs
@@ -28,6 +21,7 @@ const SecondNavbar = () => {
     }, []);
 
     const handleLogout = () => {
+        localStorage.removeItem("token");
         clearUsers()
         router.push("/");
     }

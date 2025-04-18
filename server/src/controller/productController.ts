@@ -62,6 +62,9 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
                 categoryId: category.id,
                 vendorId: vendorId
             },
+            include: {
+                category: true
+            }
         });
         res.status(201).json({ message: "Product added successfully", product });
     } catch (error: any) {
@@ -76,7 +79,7 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
     try {
         const products = await prisma.product.findMany({
             include: {
-                Category: true
+                category: true
             },
         });
         res.status(200).json(products);
@@ -93,7 +96,7 @@ export const getProductsById = async (req: Request, res: Response): Promise<void
                 id: Number(id)
             },
             include: {
-                Category: true
+                category: true
             }
         });
         res.status(200).json(products);
@@ -134,11 +137,55 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
                 id: Number(id)
             },
             include: {
-                Category: true
+                category: true
             }
         });
         res.status(200).json({ message: "Product deleted successfully", product });
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const getProductsByCategory = async (req: Request, res: Response): Promise<void> => {
+    const { name } = req.params;
+
+
+    if (!name) {
+        res.status(400).json({ message: "Category name is required" });
+        return;
+    }
+
+    try {
+        const category = await prisma.category.findUnique({
+            where: {
+                name
+            },
+            include: {
+                products: {
+                    include:{
+                        category:{
+                            select:{
+                                id:true,
+                                name:true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!category) {
+            res.status(404).json({ message: "Category not found" });
+            return;
+        }
+
+        res.status(200).json({
+            category: category.name,
+            products: category.products
+        });
+    } catch (error) {
+        console.log("Error while getting products by category")
+        res.status(500).json({ message: "Server error while getting prodcts by category" });
+
     }
 }
