@@ -2,8 +2,9 @@
 import { ProductCard } from "./ProductCard"
 import { useEffect, useState } from "react"
 import Pricerange from "@/components/Pricerange"
-import { useProductStore } from "@/store/productStore"
 import type { ProductProps } from "@/state/types"
+import { useCartStore } from "@/store/cartStore"
+import CartModal from "./CartModal"
 
 interface ProductListProps {
     products: ProductProps[];
@@ -12,6 +13,7 @@ interface ProductListProps {
 
 const mapProductToCardProps = (product: ProductProps) => {
     return {
+        id: product.id,
         title: product.name,
         price: product.price,
         category: product.category?.name || `Category ${product.categoryId}`,
@@ -28,15 +30,35 @@ const ProductList = ({ products }: ProductListProps) => {
     const [activeFilter, setActiveFilter] = useState(12)
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
+    const {
+        items,
+        isOpen,
+        closeCart,
+        updateQuantity,
+        removeItem,
+        fetchCart
+    } = useCartStore();
+
+    useEffect(() => {
+        fetchCart();
+    }, [fetchCart]);
+
+    const mappedCartItems = Array.isArray(items) ? items.map(item => ({
+        id: item.id,
+        name: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+        image: Array.isArray(item.product.image) ? item.product.image[0] : item.product.image
+    })) : [];
 
     return (
         <div className="container mx-auto p-4 sm:py-8">
             {/* Breadcrumb */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-8">
-                <div className="text-gray-600 mb-2 sm:mb-0">
+                {/* <div className="text-gray-600 mb-2 sm:mb-0">
                     <span>Home</span>
                     <span className="mx-2">/</span>
-                </div>
+                </div> */}
                 <div className="text-gray-600 text-sm sm:text-base">
                     Showing 1-{Math.min(products.length, activeFilter)} of {products.length} results
                 </div>
@@ -203,6 +225,13 @@ const ProductList = ({ products }: ProductListProps) => {
                     </div>
                 </div>
             </div>
+            <CartModal
+                isOpen={isOpen}
+                onClose={closeCart}
+                cartItems={mappedCartItems}
+                onUpdateQuantity={updateQuantity}
+                onRemoveItem={removeItem}
+            />
         </div>
     )
 }

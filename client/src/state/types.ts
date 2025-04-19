@@ -7,6 +7,7 @@ export interface PriceRangeSelectorProps {
 }
 
 export interface ProductCardProps {
+    id?:number;
     title: string;
     price: number;
     category: string;
@@ -46,4 +47,16 @@ export interface CategoryResponse {
     category?: string;
     products: ProductProps[];
 }
+
+export interface CartItem {
+    id: number;
+    productId: number;
+    quantity: number;
+    product: {
+      id: number;
+      name: string;
+      price: number;
+      image?: string;
+    };
+  }
 

@@ -1,18 +1,32 @@
 // SecondNavbar.jsx
 "use client";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Menu, User, Facebook, Twitter, Mail, Linkedin, Send, RefreshCw, Heart, ShoppingCart, LogOut } from "lucide-react";
 import { FaPinterestP, FaWhatsapp } from "react-icons/fa";
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useUserStore } from '@/store/userStore';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
+
+
+interface Category {
+    id: string;
+    name: string;
+}
 
 const SecondNavbar = () => {
-    const [isHovered, setIsHovered] = useState<string | null>(null);
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const { user, fetchUsers, loading, error, clearUsers } = useUserStore();
     const router = useRouter();
-    const [isProfileOpen, setIsProfileOpen] = useState(false); // Added for profile dropdown
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
+    
+    // Add refs for each dropdown container
+    const ourProductRef = useRef<HTMLDivElement>(null);
+    const pagesRef = useRef<HTMLDivElement>(null);
+    const accountRef = useRef<HTMLDivElement>(null);
+    const profileRef = useRef<HTMLDivElement>(null);
 
     // Add debug logs
     useEffect(() => {
@@ -20,11 +34,67 @@ const SecondNavbar = () => {
         console.log("Current user:", user);
     }, []);
 
+    // Handle clicks outside dropdowns
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                activeDropdown === "our-product" && 
+                ourProductRef.current && 
+                !ourProductRef.current.contains(event.target as Node)
+            ) {
+                setActiveDropdown(null);
+            } else if (
+                activeDropdown === "pages" && 
+                pagesRef.current && 
+                !pagesRef.current.contains(event.target as Node)
+            ) {
+                setActiveDropdown(null);
+            } else if (
+                activeDropdown === "account" && 
+                accountRef.current && 
+                !accountRef.current.contains(event.target as Node)
+            ) {
+                setActiveDropdown(null);
+            }
+            
+            if (
+                isProfileOpen && 
+                profileRef.current && 
+                !profileRef.current.contains(event.target as Node)
+            ) {
+                setIsProfileOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [activeDropdown, isProfileOpen]);
+
+    //fetch categories
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+                setCategories(response.data);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         clearUsers()
         router.push("/");
     }
+
+    const handleRedirect = (categoryName:string) => {
+        router.push(`/categories/${categoryName}`);
+    };
 
     if (loading) return <p>Loading users...</p>
     if (error) return <p className="text-red-500">{error}</p>
@@ -53,37 +123,43 @@ const SecondNavbar = () => {
 
                     {/* Our Product Dropdown */}
                     <div
+                        ref={ourProductRef}
                         className="relative z-20"
-                        onMouseEnter={() => setIsHovered("our-product")}
-                        onMouseLeave={() => setIsHovered(null)}
+                        onClick={() => setActiveDropdown(activeDropdown === "our-product" ? null : "our-product")}
                     >
                         <Button className="border px-4 py-6 rounded-full bg-white text-black text-lg hover:bg-gray-300">
                             Our Product
                         </Button>
-                        {isHovered === "our-product" && (
+                        {activeDropdown === "our-product" && (
                             <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-2 z-30">
-                                <ul className="text-gray-700">
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Adsense</li>
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Youtube</li>
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Facebook</li>
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Instagram</li>
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Telegram</li>
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Whatsupp</li>
-                                </ul>
+                                {categories.map((category, index) => (
+                                    <ul key={index} className="text-gray-700">
+                                        <li 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleRedirect(category.name);
+                                                setActiveDropdown(null);
+                                            }} 
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                        >
+                                            {category.name}
+                                        </li>
+                                    </ul>
+                                ))}
                             </div>
                         )}
                     </div>
 
                     {/* Pages Dropdown */}
                     <div
+                        ref={pagesRef}
                         className="relative z-20"
-                        onMouseEnter={() => setIsHovered("pages")}
-                        onMouseLeave={() => setIsHovered(null)}
+                        onClick={() => setActiveDropdown(activeDropdown === "pages" ? null : "pages")}
                     >
                         <Button className="border px-4 py-6 rounded-full bg-white text-black text-lg hover:bg-gray-300">
                             Pages
                         </Button>
-                        {isHovered === "pages" && (
+                        {activeDropdown === "pages" && (
                             <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-2 z-30">
                                 <ul className="text-gray-700">
                                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">About Us</li>
@@ -96,14 +172,14 @@ const SecondNavbar = () => {
 
                     {/* My Account Dropdown */}
                     <div
+                        ref={accountRef}
                         className="relative z-20"
-                        onMouseEnter={() => setIsHovered("account")}
-                        onMouseLeave={() => setIsHovered(null)}
+                        onClick={() => setActiveDropdown(activeDropdown === "account" ? null : "account")}
                     >
                         <Button className="border px-4 py-6 rounded-full bg-white text-black text-lg hover:bg-gray-300">
                             My Account
                         </Button>
-                        {isHovered === "account" && (
+                        {activeDropdown === "account" && (
                             <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-2 z-30">
                                 <ul className="text-gray-700">
                                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Shop</li>
@@ -135,9 +211,9 @@ const SecondNavbar = () => {
                 <div className="flex items-center gap-3">
 
                     {user ? (
-                        <div className="relative">
-                            <Button 
-                                variant="ghost" 
+                        <div className="relative" ref={profileRef}>
+                            <Button
+                                variant="ghost"
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                                 className="relative h-10 w-10 p-0 rounded-full bg-white hover:bg-gray-100"
                             >
@@ -157,9 +233,12 @@ const SecondNavbar = () => {
                                             <span>My Profile</span>
                                         </div>
                                     </div>
-                                    <div 
+                                    <div
                                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600"
-                                        onClick={handleLogout}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleLogout();
+                                        }}
                                     >
                                         <div className="flex items-center">
                                             <LogOut className="mr-2 h-4 w-4" />

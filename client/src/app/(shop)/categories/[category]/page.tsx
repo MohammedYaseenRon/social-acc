@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProductList from "@/components/ProductList";
 import type { CategoryResponse } from "@/state/types";
+import CartModal from "@/components/CartModal";
 
 const CategoryPage = ({ params }: { params: { category: string } }) => {
   const [data, setData] = useState<CategoryResponse | null>(null);
@@ -30,7 +31,7 @@ const CategoryPage = ({ params }: { params: { category: string } }) => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Category: {data.category}</h1>
+      <h1 className="text-lg font-medium ml-4">Home / {data.category}</h1>
       <ProductList products={data.products} />
     </div>
   );

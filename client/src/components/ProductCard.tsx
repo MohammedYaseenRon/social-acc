@@ -5,8 +5,10 @@ import { Star, ShoppingCart } from "lucide-react"
 import Image from "next/image"
 import type React from "react"
 import { useState } from "react"
+import { useCartStore } from "@/store/cartStore"
 
 export const ProductCard: React.FC<ProductCardProps> = ({
+  id,
   title,
   price,
   category,
@@ -17,7 +19,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [rating, setRating] = useState(0)
-  const [imageError, setImageError] = useState(false)
+  const [imageError, setImageError] = useState(false);
+  const { addToCart, openCart } = useCartStore();
 
   const formatedPrice = (price: number): string => {
     return new Intl.NumberFormat("en-IN", {
@@ -27,6 +30,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       maximumFractionDigits: 0,
     }).format(price)
   }
+
+  const handleAddToCart = async () => {
+    if (typeof id === 'undefined') {
+      throw new Error("Product ID is required");
+    }
+  
+    try {
+      // Just pass productId and quantity — userId is handled via token on backend
+      await addToCart(id, 1); // 👈 Updated call
+  
+      // Then open the cart
+      openCart();
+    } catch (error) {
+      console.error("Failed to add item to cart:", error);
+    }
+  };
+  
+
 
   return (
     <div className="w-full h-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
@@ -78,6 +99,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           className="w-full bg-blue-600 text-white py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-medium transition-all duration-300 hover:bg-blue-700 flex items-center justify-center gap-2 group"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onClick={handleAddToCart}
+          disabled={status !== "in-stock"}
         >
           {isHovered ? (
             <>
