@@ -69,7 +69,7 @@ model Product {
   name        String
   description String?
   price       Float
-  sku         String
+  sku         String?
   stock       Int           @default(0)
   images      String[]
   isActive    Boolean       @default(true)
@@ -90,7 +90,14 @@ model Category {
   name        String    @unique
   description String?
   createdAt   DateTime  @default(now())
+
+  //clear parent-child hierarchy.
+  parentId   Int?
+  parent   Category?  @relation("CategoryToSubcategory", fields: [parentId],references: [id])
+  subcategories   Category[] @relation("CategoryToSubcategory")
   products    Product[]
+
+  @@unique([name,parentId])
 }
 
 model Order {

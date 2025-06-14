@@ -3,226 +3,192 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Earth, Menu, Phone, SearchIcon, User } from "lucide-react";
 import { Input } from './ui/input';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { motion } from "framer-motion"
+import { Button } from './ui/button';
+import { LogIn, Menu, UserPlus, X } from 'lucide-react';
 
 
 const Navbar = () => {
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const router = useRouter();
 
-    useEffect(() => {
-        const checkScreensize = () => {
-            setIsMobile(window.innerWidth < 1327);
-        };
 
-        checkScreensize();
-
-        window.addEventListener('resize', checkScreensize);
-        return () => window.removeEventListener('resize', checkScreensize);
-    }, []);
-
+    const navItems = [
+        { name: "Home", href: "#" },
+        { name: "Products", href: "#products" },
+        { name: "Categories", href: "#categories" },
+        { name: "About", href: "#about" },
+        { name: "Contact", href: "#contact" },
+    ];
     // useEffect(() => {
-    //     const timer = setTimeout(() => {
-    //         setShowText(true);
-    //     }, 3500);
-    //     return () => clearTimeout(timer);
+    //     const token = localStorage.getItem("token");
+    //     if (!token) return;
+
+    //     const interval = setInterval(async () => {
+    //         try {
+    //             const response = await axios.get(
+    //                 `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
+    //                 {
+    //                     headers: {
+    //                         Authorization: `Bearer ${token}`,
+    //                     },
+    //                 }
+    //             );
+
+    //             const { role } = response.data;
+
+    //             // Handle different roles (if needed)
+    //             if (role === "VENDOR") {
+    //                 toast.success("You are now a Vendor!");
+    //                 router.push("/admin");
+    //             } else if (role !== "USER") {
+    //                 clearInterval(interval);
+    //             }
+    //             clearInterval(interval);
+    //         } catch (error) {
+    //             console.error("Error checking user role", error);
+    //         }
+    //     }, 5000);
+
+    //     return () => clearInterval(interval);
     // }, []);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-    
-        const interval = setInterval(async () => {
-            try {
-                const response = await axios.get(
-                    `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-    
-                const { role } = response.data;
-    
-                // Handle different roles (if needed)
-                if (role === "VENDOR") {
-                    toast.success("You are now a Vendor!");
-                    router.push("/admin");
-                }else if(role !== "USER"){
-                    clearInterval(interval);
-                }
-                clearInterval(interval);
-            } catch (error) {
-                console.error("Error checking user role", error);
-            }
-        }, 5000);
-    
-        return () => clearInterval(interval);
-    }, []);
-    
 
-    const handleRequest = async () => {
-        setLoading(true);
-        setMessage("");
+    // const handleRequest = async () => {
+    //     setLoading(true);
+    //     setMessage("");
 
-        const token = localStorage.getItem("token");
-        if (!token) {
-            setLoading(false);
-            setMessage("You must be logged in to request vendor access.");
-            return;
-        }
-        // console.log(token);
+    //     const token = localStorage.getItem("token");
+    //     if (!token) {
+    //         setLoading(false);
+    //         setMessage("You must be logged in to request vendor access.");
+    //         return;
+    //     }
+    //     // console.log(token);
 
-        try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/vendor`, {}, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setMessage(response.data.message || "Request submitted!");
-            toast.success("Vendor request sent, Come back after 10minutes");
-        } catch (error: any) {
-            toast.error("Error while requesting");
-            console.log("Error while sending request", error);
-            if (error.response?.data?.error) {
-                setMessage(error.response.data.error);
-            } else {
-                setMessage("Something went wrong.");
-            }
-        }
-    }
+    //     try {
+    //         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/vendor`, {}, {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //         });
+    //         setMessage(response.data.message || "Request submitted!");
+    //         toast.success("Vendor request sent, Come back after 10minutes");
+    //     } catch (error: any) {
+    //         toast.error("Error while requesting");
+    //         console.log("Error while sending request", error);
+    //         if (error.response?.data?.error) {
+    //             setMessage(error.response.data.error);
+    //         } else {
+    //             setMessage("Something went wrong.");
+    //         }
+    //     }
+    // }
 
-    // Desktop layout
-    if (!isMobile) {
-        return (
-            <div className="w-full bg-white px-4 md:px-20 py-2">
-                <div className="flex items-center justify-between">
-                    {/* Logo & Tagline */}
-                    <div className="py-1">
-                        <h1 className="text-xl md:text-3xl font-semibold">
-                            Social's <span className="text-red-700">Account</span>
-                        </h1>
-                        <p className="text-sm">Biggest marketplace for buy and sell</p>
-                    </div>
-
-                    {/* Search Bar */}
-                    <div className="flex-1 max-w-3xl mx-8 relative">
-                        <SearchIcon size={20} className="absolute left-3 top-3 text-gray-500" />
-                        <Input
-                            type="text"
-                            className="w-full rounded-full pl-10 h-12 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="Search..."
-                        />
-                    </div>
-
-                    {/* Contact & Services */}
-                    <div className="flex items-center gap-12">
-                        {/* Support */}
-                        <div className="flex items-center gap-2">
-                            <Phone size={20} />
-                            <div>
-                                <h2 className="text-base">24 <span className="text-blue-600">Support</span></h2>
-                                <p className="text-blue-600 text-base">+91-9080890059</p>
-                            </div>
-                        </div>
-
-                        {/* Worldwide Service */}
-                        <div className="flex items-center gap-2">
-                            <Earth size={20} />
-                            <div>
-                                <h2 className="text-base text-gray-600">Worldwide</h2>
-                                <p className="font-medium text-blue-600 text-base">Services</p>
-                            </div>
-                        </div>
-                        <div className='flex items-center gap-2'>
-                            <button
-                                onClick={handleRequest}
-                                className='bg-white text-black px-4 py-2 border rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
-                                disabled={loading}
-                            >
-                                <User size={20} className='inline-flex' />
-                                {loading ? "Requesting..." : "Request Vendor"}
-                            </button>
-                        </div>
-
-                        {message && (
-                            <p className="mt-2 text-sm text-gray-600">{message}</p>
-                        )}
-
-                        {/* {showText && (
-                            <div className="absolute right-4 mt-2 bg-white rounded-lg shadow-md p-2 animate-text-fade z-10">
-                                <div className="flex flex-col items-end cursor-pointer">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-xs font-medium text-gray-800">
-                                            If you want to become vendor then
-                                        </span>
-                                        <User size={14} className="text-blue-600" />
-                                    </div>
-                                    <span className="text-xs font-bold text-blue-600">
-                                        request admin
-                                    </span>
-                                </div>
-                            </div>
-                        )} */}
-
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // Mobile layout
     return (
-        <div className="w-full bg-white shadow-sm px-4">
-            {/* Top section with logo and menu */}
-            <div className="flex items-center justify-between py-3">
-                <Menu size={24} className="text-blue-600" />
-                <div className="text-center">
-                    <h1 className="text-xl font-semibold">
-                        Social's <span className="text-red-700">Account</span>
-                    </h1>
+        <motion.nav
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm"
+        >
+            <div className='container mx-auto px-8'>
+                <div className='flex items-center justify-between h-16'>
+                    <div className='flex items-center gap-2'>
+                        <div className='w-8 h-8 bg-gradient-to-br from-gray-900 to-gray-700 rounded-lg flex items-center justify-center'>
+                            <span className='font-playfair text-white font-bold text-sm'>M</span>
+                        </div>
+                        <span className="text-xl font-bold font-playfair text-gray-900">MarketPlace</span>
+
+                    </div>
+
+                    <div className='hidden md:flex items-center gap-6'>
+                        {navItems.map((nav, index) => (
+                            <motion.a
+                                key={index}
+                                href={nav.href}
+                                whileHover={{ y: -2 }}
+                                className="text-gray-600 hover:text-gray-900 font-medium font-inter transition-colors duration-300 relative group"
+                            >
+                                {nav.name}
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-900 group-hover:w-full transition-all duration-300" />
+                            </motion.a>
+                        ))}
+                    </div>
+
+                    <div className='hidden md:flex items-center gap-4'>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="font-inter font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                        >
+                            <LogIn className="w-4 h-4 mr-2" />
+                            Login
+                        </Button>
+                        <Button
+                            size="sm"
+                            className="bg-gray-900 hover:bg-gray-800 text-white font-inter font-medium px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                        >
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            Sign Up
+                        </Button>
+                    </div>
+                    <button
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className='md:hidden p-2 rounded-lg hover:bg-gray-200 transition-colors'
+                    >
+                        {isMenuOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
+                    </button>
                 </div>
-                <User size={20} />
+
+                {isMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="md:hidden border-t border-gray-100 py-4"
+                    >
+                        <div className="flex flex-col gap-4">
+                            {navItems.map((item, index) => (
+                                <a
+                                    key={index}
+                                    href={item.href}
+                                    className="text-gray-700 hover:text-gray-900 font-medium font-inter py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    {item.name}
+                                </a>
+                            ))}
+                            <div className="flex flex-col gap-2 pt-4 border-t border-gray-100">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="justify-start font-inter font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                                >
+                                    <LogIn className="w-4 h-4 mr-2" />
+                                    Login
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    className="bg-gray-900 hover:bg-gray-800 text-white font-inter font-medium rounded-full"
+                                >
+                                    <UserPlus className="w-4 h-4 mr-2" />
+                                    Sign Up
+                                </Button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
             </div>
 
-            {/* Search bar below logo */}
-            <div className="pb-4 relative">
-                <SearchIcon size={20} className="absolute left-3 top-3 text-gray-500" />
-                <Input
-                    type="text"
-                    className="w-full rounded-full pl-10 h-12 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    placeholder="Search..."
-                />
-            </div>
-            {/* {showText && (
-                <div className="absolute right-4 mt-2 bg-white rounded-lg shadow-md p-2 animate-text-fade z-10">
-                    <div className="flex flex-col items-end cursor-pointer">
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-medium text-gray-800">
-                                If you want to become vendor then
-                            </span>
-                            <User size={14} className="text-blue-600" />
-                        </div>
-                        <span className="text-xs font-bold text-blue-600">
-                            request admin
-                        </span>
-                    </div>
-                </div>
-            )} */}
-            <div className='flex items-center gap-2'>
-                <button onClick={handleRequest} className='bg-white text-black px-4 py-2 border rounded-lg'>
-                    <User size={24} className='inline-flex mb-1' />
-                    Request Vendor
-                </button>
-            </div>
-        </div>
+        </motion.nav>
+
     );
 };
 

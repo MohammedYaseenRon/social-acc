@@ -1,15 +1,20 @@
+import CallToAction from "@/components/CallToAction";
+import Categories from "@/components/Categories";
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
+import Products from "@/components/Products";
 import SecondNavbar from "@/components/SecondNavbar";
+import Features from "@/components/WhyChooseUs";
 
 export default function Home() {
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <Navbar />
-      <div className="hidden lg:block">
-      <SecondNavbar />
-      </div>
       <Hero />
+      <Features />
+      <Categories />
+      <Products />
+      <CallToAction />
     </div>
   );
 }

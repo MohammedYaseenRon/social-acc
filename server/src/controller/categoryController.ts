@@ -7,9 +7,22 @@ const prisma = new PrismaClient();
 export const getAllCategories = async (req: Request, res: Response): Promise<void> => {
     try{
         const categories = await prisma.category.findMany({
+            where:{
+                parentId:null,
+            },
             select:{
                 id:true,
-                name:true
+                name:true,
+                subcategories:{
+                    select:{
+                        id:true,
+                        name:true,
+
+                    },
+                    orderBy:{
+                        name: "asc",
+                    }
+                }
             },
             orderBy:{
                 name:"asc"

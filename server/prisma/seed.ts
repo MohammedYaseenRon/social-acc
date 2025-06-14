@@ -7,22 +7,63 @@ dotenv.config();
 
 
 export async function main() {
-    const categories = ["Adsense", "Affiliate", "Youtube", "Facebook", "Instagram", "Telegram", "WhatsApp", "Amazon", "Blog", "E-commerce", "Twitter"];
 
-
-    for (const name of categories) {
-        await prisma.category.upsert({
+    const mainCategories = [
+        "Digital Products", "Clothing & Accessories", "Electronics"
+    ];
+    const maincat: {[key:string]: number} = {}
+    
+    for (const name of mainCategories) {
+        const cat = await prisma.category.upsert({
             where: { name },
             update: {},
             create: {
-                name
+                name, parentId: null
             },
         });
+        maincat[name] = cat.id; 
     }
-    console.log("Categories seeded successfully");
 
-    // ✅ 2. Seed SuperAdmin
-    // ✅ 2. Seed SuperAdmin
+    const subcategories = [
+        // Digital Products
+        { name: "E-books", parentName: "Digital Products" },
+        { name: "Software", parentName: "Digital Products" },
+        { name: "Music", parentName: "Digital Products" },
+
+        // Clothing & Accessories
+        { name: "T-Shirts", parentName: "Clothing & Accessories" },
+        { name: "Jackets", parentName: "Clothing & Accessories" },
+        { name: "Shoes", parentName: "Clothing & Accessories" },
+
+        // Electronics
+        { name: "Headphones", parentName: "Electronics" },
+        { name: "Chargers", parentName: "Electronics" },
+        { name: "Mobile Accessories", parentName: "Electronics" },
+    ];
+
+    for (const sub of subcategories) {
+        const parentId = maincat[sub.parentName];
+        if (!parentId) {
+            console.warn(`⚠️ Parent category not found for ${sub.name}`);
+            continue;
+        }
+
+        await prisma.category.upsert({
+            where: {
+                name: sub.name
+            },
+            update: {},
+            create: {
+                name: sub.name,
+                parentId,
+            }
+        })
+    }
+
+    console.log("Categories and subcategories seeded successfully");
+
+    //  2. Seed SuperAdmin
+    //  2. Seed SuperAdmin
     const superadminEmail = "yaseenron070@gmail.com";
     const superadminPassword = process.env.SUPERADMIN_PASSWORD || "supersecurepassword";
 
@@ -41,9 +82,9 @@ export async function main() {
             },
         });
 
-        console.log("✅ SuperAdmin created");
+        console.log(" SuperAdmin created");
     } else {
-        console.log("✅ SuperAdmin already exists");
+        console.log(" SuperAdmin already exists");
     }
 
 }

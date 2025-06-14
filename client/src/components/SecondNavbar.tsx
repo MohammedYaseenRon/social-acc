@@ -8,11 +8,25 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useUserStore } from '@/store/userStore';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuPortal,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 
 interface Category {
     id: string;
     name: string;
+    subcategories: {
+        id: string,
+        name: string
+    }[];
 }
 
 const SecondNavbar = () => {
@@ -21,7 +35,7 @@ const SecondNavbar = () => {
     const router = useRouter();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
-    
+
     // Add refs for each dropdown container
     const ourProductRef = useRef<HTMLDivElement>(null);
     const pagesRef = useRef<HTMLDivElement>(null);
@@ -37,29 +51,23 @@ const SecondNavbar = () => {
     // Handle clicks outside dropdowns
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (
-                activeDropdown === "our-product" && 
-                ourProductRef.current && 
-                !ourProductRef.current.contains(event.target as Node)
-            ) {
-                setActiveDropdown(null);
-            } else if (
-                activeDropdown === "pages" && 
-                pagesRef.current && 
+             if (
+                activeDropdown === "pages" &&
+                pagesRef.current &&
                 !pagesRef.current.contains(event.target as Node)
             ) {
                 setActiveDropdown(null);
             } else if (
-                activeDropdown === "account" && 
-                accountRef.current && 
+                activeDropdown === "account" &&
+                accountRef.current &&
                 !accountRef.current.contains(event.target as Node)
             ) {
                 setActiveDropdown(null);
             }
-            
+
             if (
-                isProfileOpen && 
-                profileRef.current && 
+                isProfileOpen &&
+                profileRef.current &&
                 !profileRef.current.contains(event.target as Node)
             ) {
                 setIsProfileOpen(false);
@@ -92,7 +100,7 @@ const SecondNavbar = () => {
         router.push("/");
     }
 
-    const handleRedirect = (categoryName:string) => {
+    const handleRedirect = (categoryName: string) => {
         router.push(`/categories/${categoryName}`);
     };
 
@@ -120,35 +128,29 @@ const SecondNavbar = () => {
                     <Button className="border px-4 py-6 rounded-full bg-white text-black text-lg hover:bg-gray-300">
                         Home
                     </Button>
-
                     {/* Our Product Dropdown */}
-                    <div
-                        ref={ourProductRef}
-                        className="relative z-20"
-                        onClick={() => setActiveDropdown(activeDropdown === "our-product" ? null : "our-product")}
-                    >
-                        <Button className="border px-4 py-6 rounded-full bg-white text-black text-lg hover:bg-gray-300">
-                            Our Product
-                        </Button>
-                        {activeDropdown === "our-product" && (
-                            <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-2 z-30">
-                                {categories.map((category, index) => (
-                                    <ul key={index} className="text-gray-700">
-                                        <li 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleRedirect(category.name);
-                                                setActiveDropdown(null);
-                                            }} 
-                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                        >
-                                            {category.name}
-                                        </li>
-                                    </ul>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button className="border px-4 py-2.5 rounded-full bg-white text-black text-lg hover:bg-gray-300">Our Product</button>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent  align="start">
+                            {categories.map((category) => (
+                                <DropdownMenuSub key={category.id}>
+                                    <DropdownMenuSubTrigger>{category.name}</DropdownMenuSubTrigger>
+                                    <DropdownMenuPortal>
+                                        <DropdownMenuSubContent>
+                                            {category.subcategories.map((subcat) => (
+                                                <DropdownMenuItem key={subcat.id} onClick={() => handleRedirect(subcat.name)}>
+                                                    {subcat.name}
+                                                </DropdownMenuItem>
+                                            ))}
+                                        </DropdownMenuSubContent>
+                                    </DropdownMenuPortal>
+                                </DropdownMenuSub>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
 
                     {/* Pages Dropdown */}
                     <div
