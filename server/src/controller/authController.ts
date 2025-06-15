@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 
 export const RegisterUser = async (req: Request, res: Response): Promise<void> => {
-    const { name, email, password } = req.body;
+    const { name, email, password,role } = req.body;
     if (!name || !email || !password) {
         res.status(400).json({ message: "Please fill all the fields" });
         return
@@ -35,9 +35,18 @@ export const RegisterUser = async (req: Request, res: Response): Promise<void> =
                 name,
                 email,
                 password: hashedPassword,
-                role: "USER",
+                role: role?.toUpperCase() === "VENDOR" ? "VENDOR" : "USER",
             }
-        })
+        });
+
+        if(user.role === "VENDOR") {
+            await prisma.vendorRequest.create({
+                data:{
+                    userId:user.id,
+                    status: "PENDING",
+                }
+            });
+        }
         const token = jwt.sign(
             { userId: user.id, role: user.role },
             JWT_SECRET,

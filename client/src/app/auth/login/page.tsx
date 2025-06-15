@@ -9,7 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import axios from "axios";
-
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs"
 
 
 
@@ -24,8 +29,9 @@ export default function Signup() {
         password: "",
 
     });
+    const [activeTab,setActiveTab] = useState("user");
     const [showPassword, setShowPassword] = useState(false);
-
+    const [errors, setErrors] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -67,12 +73,12 @@ export default function Signup() {
                 setFormData({ email: '', password: '' });
                 const { token, user } = response.data;
                 localStorage.setItem('token', token);
-                
-                if(user.role == "ADMIN") {
+
+                if (user.role == "ADMIN") {
                     router.push("/superAdmin");
-                }else if(user.role == "VENDOR") {
+                } else if (user.role == "VENDOR") {
                     router.push("/admin");
-                }else{
+                } else {
                     router.push("/")
                 }
             }
@@ -88,86 +94,101 @@ export default function Signup() {
         }
 
     }
+    const renderForm = (userType: string) => (
+        <Card className="w-full max-w-md shadow-xl rounded-3xl border border-gray-100 bg-white/90 backdrop-blur-md px-2 py-8 transition-all hover:shadow-2xl">
+            <CardHeader className="relative">
+                <CardTitle className="text-2xl font-medium text-start text-gray-800 tracking-tight">
+                    {userType === "user" ? "Login as a User" : "Login as a Vendor"}
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="mt-2">
+                {errors.length > 0 && (
+                    <Alert variant="destructive" className="mb-6 bg-red-50 border-red-200">
+                        <AlertCircle className="h-4 w-4 text-red-600" />
+                        <AlertTitle className="text-red-700">Error</AlertTitle>
+                        <AlertDescription className="text-red-600">
+                            {errors.map((err, index) => (
+                                <p key={index}>{err}</p>
+                            ))}
+                        </AlertDescription>
+                    </Alert>
+                )}
 
-    const [errors, setErrors] = useState<string[]>([]);
-
-    return (
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-indigo-50 via-gray-50 to-blue-100 p-6">
-            <Card className="w-full max-w-md shadow-xl rounded-3xl border border-gray-100 bg-white/90 backdrop-blur-md p-6 transition-all hover:shadow-2xl">
-                <CardHeader className="relative">
-                    <CardTitle className="text-4xl font-semibold text-center text-gray-800 tracking-tight">
-                        Login
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="mt-2">
-                    {errors.length > 0 && (
-                        <Alert variant="destructive" className="mb-6 bg-red-50 border-red-200">
-                            <AlertCircle className="h-4 w-4 text-red-600" />
-                            <AlertTitle className="text-red-700">Error</AlertTitle>
-                            <AlertDescription className="text-red-600">
-                                {errors.map((err, index) => (
-                                    <p key={index}>{err}</p>
-                                ))}
-                            </AlertDescription>
-                        </Alert>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="space-y-2">
-                            <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
-                            <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="Enter your email"
-                                value={formData.email}
-                                onChange={(e) => handleChange('email', e.target.value)}
-                                className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
-                            />
-                        </div>
-
-                        <div className="relative space-y-2">
-                            <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
-                            <Input
-                                id="password"
-                                name="password"
-                                type={showPassword ? 'text' : 'password'}
-                                placeholder="Enter your password"
-                                value={formData.password}
-                                onChange={(e) => handleChange('password', e.target.value)}
-                                className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
-                            />
-                            {showPassword ? (
-                                <EyeOff
-                                    size={18}
-                                    className="absolute right-3 top-8 cursor-pointer text-gray-500"
-                                    onClick={() => setShowPassword(false)}
-                                />
-                            ) : (
-                                <Eye
-                                    size={18}
-                                    className="absolute right-3 top-8 cursor-pointer text-gray-500"
-                                    onClick={() => setShowPassword(true)}
-                                />
-                            )}
-                        </div>
-                        <Button
-                            type="submit"
-                            className="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl py-3 font-semibold hover:from-indigo-600 hover:to-blue-700 transition-all disabled:opacity-50"
-                            disabled={loading}
-                        >
-                            {loading ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : 'Log '}
-                        </Button>
-                    </form>
-
-                    <div className="mt-4 text-center">
-                        <p className="text-sm text-gray-600">
-                            Don't have an account?{' '}
-                            <a href="/auth/signup" className="text-indigo-600 hover:underline font-medium">Regi</a>
-                        </p>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="space-y-2">
+                        <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
+                        <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={formData.email}
+                            onChange={(e) => handleChange('email', e.target.value)}
+                            className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                        />
                     </div>
-                </CardContent>
-            </Card>
+
+                    <div className="relative space-y-2">
+                        <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+                        <Input
+                            id="password"
+                            name="password"
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Enter your password"
+                            value={formData.password}
+                            onChange={(e) => handleChange('password', e.target.value)}
+                            className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                        />
+                        {showPassword ? (
+                            <EyeOff
+                                size={18}
+                                className="absolute right-3 top-8 cursor-pointer text-gray-500"
+                                onClick={() => setShowPassword(false)}
+                            />
+                        ) : (
+                            <Eye
+                                size={18}
+                                className="absolute right-3 top-8 cursor-pointer text-gray-500"
+                                onClick={() => setShowPassword(true)}
+                            />
+                        )}
+                    </div>
+                    <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl py-3 font-semibold hover:from-indigo-600 hover:to-blue-700 transition-all disabled:opacity-50"
+                        disabled={loading}
+                    >
+                        {loading ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : 'Log '}
+                    </Button>
+                </form>
+
+                <div className="mt-4 text-center">
+                    <p className="text-sm text-gray-600">
+                        Don't have an account?{' '}
+                        <a href="/auth/signup" className="text-indigo-600 hover:underline font-medium">Regi</a>
+                    </p>
+                </div>
+            </CardContent>
+        </Card>
+    )
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-gray-50 to-blue-100 flex items-center justify-center p-4">
+            <div className="w-full max-w-md mx-auto p-4">
+                <Tabs value={activeTab} onValueChange={setActiveTab} >
+                    <TabsList className="grid w-full grid-cols-2 mb-4 h-12 bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200">
+                        <TabsTrigger value="user" className="rounded-lg font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all"
+                        >User</TabsTrigger>
+                        <TabsTrigger value="vendor" className="rounded-lg font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all"
+                        >Vendor</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="user" className="flex items-center justify-center">
+                        {renderForm('user')}
+                    </TabsContent>
+                    <TabsContent value="vendor" className="flex items-center justify-center">
+                        {renderForm('vendor')}
+                    </TabsContent>
+                </Tabs>
+            </div>
         </div>
     )
 }
