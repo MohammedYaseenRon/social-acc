@@ -67,10 +67,65 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
     try {
+        const {
+            category,
+            minPrice,
+            maxPrice,
+            sortBy,
+            status,
+            page: pageStr = "1",
+            limit: limitStr = "10"
+        } = req.query as Record<string, string>;
+
+        const pageNum = Math.max(1, parseInt(pageStr, 10));
+        const limitNum = Math.max(1, parseInt(limitStr, 10));
+
+        const filters: any = {};
+        if (category) {
+            const foundCategory = await prisma.category.findUnique({
+                where: {
+                    name: category
+                },
+            });
+
+            if (foundCategory) {
+                filters.categoryId = foundCategory.id;
+            }
+        }
+
+        if (minPrice || maxPrice) {
+            filters.price = {};
+            if (minPrice) filters.price.gte = parseFloat(minPrice);
+            if (maxPrice) filters.price.gte = parseFloat(maxPrice);
+
+        }
+
+        if (status) {
+            filters.status = status.toUpperCase();
+        }
+
+        const sortMap: Record<string, any> = {
+            price_asc: { price: "asc" },
+            price_desc: { price: "desc" },
+            name_asc: { name: "asc" },
+            name_desc: { name: "desc" },
+            latest: { createdAt: "desc" }
+        };
+
         const products = await prisma.product.findMany({
+            where: filters,
             include: {
-                category: true
+                category: true,
+                Vendor: {
+                    select: {
+                        id: true,
+                        storeName: true
+                    }
+                }
             },
+            orderBy: sortMap[sortBy || "latest"],
+            skip: (pageNum - 1) * limitNum,
+            take: limitNum
         });
         res.status(200).json(products);
     } catch (error) {
@@ -150,32 +205,38 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
             where: {
                 name
             },
+        });
+        if (!category) {
+            res.status(404).json({ message: "Category not found" });
+            return;
+        }
+        const products = await prisma.product.findMany({
+            where: {
+                categoryId: category.id
+            },
+
             include: {
-                products: {
+                category: {
                     include: {
-                        category: {
+                        subcategories: {
                             select: {
                                 id: true,
                                 name: true
                             }
                         }
                     }
-                }
+                },
+                Vendor: true
             }
-        });
+        })
 
-        if (!category) {
-            res.status(404).json({ message: "Category not found" });
-            return;
-        }
 
         res.status(200).json({
             category: category.name,
-            products: category.products
+            products
         });
     } catch (error) {
-        console.log("Error while getting products by category")
+        console.log("Error while getting products by category", error)
         res.status(500).json({ message: "Server error while getting prodcts by category" });
-
     }
 }

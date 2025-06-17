@@ -48,7 +48,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
 
   return (
-    <div className="w-full h-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
+    <div className="w-[350px] h-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
       <div className="relative h-36 overflow-hidden bg-gray-100">
         <Image
           src={imageError ? "/api/placeholder/300/300" : imageUrl}

@@ -69,94 +69,66 @@ const Addpage: React.FC<AddpageProps> = () => {
     setImages((images.filter((_, i) => i !== index)));
   }
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-  console.log("🚀 Submitting new product form");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const formDataToSend = new FormData();
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("price", formData.price.toString());
-    formDataToSend.append("sku", formData.sku);
-    formDataToSend.append("status", formData.status);
-    formDataToSend.append("stock", formData.stock.toString());
-    formDataToSend.append("categoryName", formData.category);
-    formDataToSend.append("isActive", formData.status === "INSTOCK" ? "true" : "false");
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("price", formData.price.toString());
+      formDataToSend.append("sku", formData.sku);
+      formDataToSend.append("status", formData.status);
+      formDataToSend.append("stock", formData.stock.toString());
+      formDataToSend.append("categoryName", formData.category);
+      formDataToSend.append("isActive", formData.status === "INSTOCK" ? "true" : "false");
 
-    console.log("📝 Form Data:");
-    console.log("Name:", formData.name);
-    console.log("Price:", formData.price);
-    console.log("SKU:", formData.sku);
-    console.log("Status:", formData.status);
-    console.log("Stock:", formData.stock);
-    console.log("Category:", formData.category);
-    console.log("Is Active:", formData.status === "INSTOCK" ? "true" : "false");
-
-    // Append selected files
-    if (selectedFiles.length === 0) {
-      console.warn("⚠️ No images selected.");
-    } else {
-      console.log("🖼️ Selected Files:", selectedFiles.map(file => file.name));
-      selectedFiles.forEach((file) => {
-        formDataToSend.append("images", file);
-      });
-    }
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("🔐 No auth token found in localStorage");
-      alert("Authentication token missing. Please log in again.");
-      setLoading(false);
-      return;
-    }
-
-    console.log("📡 Sending POST request to:", `${process.env.NEXT_PUBLIC_API_URL}/products`);
-
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/products`,
-      formDataToSend,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
+      if (selectedFiles.length > 0) {
+        selectedFiles.forEach((file) => {
+          formDataToSend.append("images", file);
+        });
       }
-    );
 
-    console.log("✅ Response from server:", response.data);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Authentication token missing. Please log in again.");
+        setLoading(false);
+        return;
+      }
 
-    if (response.status === 201) {
-      console.log("🎉 Product added successfully");
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/products`,
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // Reset form
-      setFormData({
-        name: "",
-        category: "",
-        status: "INSTOCK",
-        price: 0,
-        image: "",
-        sku: "",
-        stock: 0,
-      });
-      setImages([]);
-      setSelectedFiles([]);
-    } else {
-      console.warn("⚠️ Unexpected response:", response.status);
+      if (response.status === 201) {
+        setFormData({
+          name: "",
+          category: "",
+          status: "INSTOCK",
+          price: 0,
+          image: "",
+          sku: "",
+          stock: 0,
+        });
+        setImages([]);
+        setSelectedFiles([]);
+      } else {
+        alert("Something went wrong, please try again.");
+      }
+    } catch (error: any) {
       alert("Something went wrong, please try again.");
+    } finally {
+      setLoading(false);
     }
-  } catch (error: any) {
-    console.error("❌ Error adding product:", error.message);
-    if (error.response) {
-      console.error("📦 Error response data:", error.response.data);
-      console.error("🔢 Status code:", error.response.status);
-      console.error("🧾 Headers:", error.response.headers);
-    }
-    alert("Something went wrong, please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-8">
