@@ -19,7 +19,9 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
-app.use(express.json()); 
+app.use(express.json({limit: "10mb"})); 
+app.use(express.urlencoded({ extended: true, limit: '10mb' })); // For form data
+
 
 
 app.get('/', (req,res) => {

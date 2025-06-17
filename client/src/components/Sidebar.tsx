@@ -1,12 +1,4 @@
-import {
-  Home,
-  Facebook,
-  Video,
-  Camera,
-  MessageSquare,
-  Phone,
-  Menu,
-} from "lucide-react";
+import React from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,90 +8,127 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarSeparator,
+} from "@/components/ui/sidebar"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
+import Link from "next/link";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { ScrollArea } from "./ui/scroll-area";
 
-// Menu items
-const items = [
-  { title: "Adsense", url: "/categories/adsense", icon: Home },
-  { title: "Facebook", url: "/categories/facebook", icon: Facebook },
-  { title: "Youtube", url: "/categories/youtube", icon: Video },
-  { title: "Instagram", url: "/categories/instagram", icon: Camera },
-  { title: "Telegram", url: "/categories/telegram", icon: MessageSquare },
-  { title: "WhatsApp", url: "/categories/whatsupp", icon: Phone },
+
+const sidebarItems = [
+  {
+    title: "Dashboard",
+    children: [
+      { title: "Overview", href: "/dashboard/overview" },
+      { title: "Analytics", href: "/dashboard/analytics" },
+      { title: "Reports", href: "/dashboard/reports" },
+    ],
+  },
+  {
+    title: "Home",
+    href: "/home",
+    children: [
+      { title: "Overview", href: "/dashboard/overview" },
+      { title: "Analytics", href: "/dashboard/analytics" },
+      { title: "Reports", href: "/dashboard/reports" },
+    ],
+  },
+  {
+    title: "Inbox",
+    href: "/inbox",
+    children: [
+      { title: "Overview", href: "/dashboard/overview" },
+      { title: "Analytics", href: "/dashboard/analytics" },
+      { title: "Reports", href: "/dashboard/reports" },
+    ],
+  },
+  {
+    title: "Settings",
+    href: "/settings",
+    children: [
+      { title: "Overview", href: "/dashboard/overview" },
+      { title: "Analytics", href: "/dashboard/analytics" },
+      { title: "Reports", href: "/dashboard/reports" },
+    ],
+  },
 ];
 
-const AppSidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleMouseEnter = () => setIsOpen(true);
-  const handleMouseLeave = () => setIsOpen(false);
-
+export function AppSidebar() {
   return (
-    <Sidebar
-      className={cn(
-        "fixed top-0 left-0 z-50 bg-white  transition-all duration-300",
-        isOpen ? "w-48" : "w-14"
-      )}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      collapsible="icon"
-    >
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            <Button
-              variant="ghost"
-              className={cn(
-                "flex items-center w-full mb-2 px-2 py-2 transition-colors hover:bg-gray-100",
-                !isOpen && "justify-center"
-              )}
-            >
-              <Menu className="text-blue-600 ml-2 min-w-[20px]" />
-              <span
-                className={cn(
-                  "ml-2 text-sm whitespace-nowrap overflow-hidden transition-all duration-300",
-                  isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
-                )}
-              >
-                All Categories
-              </span>
-            </Button>
+    <Sidebar className="flex flex-col h-full">
+      <ScrollArea className="min-h-screen" >
+      <SidebarContent >
+        <SidebarGroup className="pt-18">
+          <SidebarGroupLabel className="hover:bg-gray-100 w-full text-md mb-4 border font-medium">
+            SideBar
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2">
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a
-                      href={item.url}
-                      className={cn(
-                        "flex items-center w-full text-sm p-2 rounded hover:bg-gray-100 transition",
-                        !isOpen && "justify-center"
-                      )}
-                    >
-
-                      <item.icon className="text-blue-600" />
-                      <span
-                        className={cn(
-                          "text-sm transition-all duration-300 ",
-                          !isOpen ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto"
-                        )}
-                      >
-                        {item.title}
-                      </span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu>
+              {sidebarItems.map((items, index) =>
+                items.children ? (
+                  <Collapsible
+                    key={index}
+                    defaultOpen
+                    className="group"
+                  >
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="w-full flex items-center justify-between hover:bg-gray-100">
+                          {items.title}
+                          <ChevronRight className="w-4 h-4 text-gray-400 transform transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {items.children.map((item, idx) => (
+                            <SidebarMenuSubItem
+                              key={idx}
+                              className="w-full hover:bg-gray-100 p-2 rounded-lg"
+                            >
+                              <Link href={item.href}>{item.title}</Link>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                ) : (
+                  <SidebarMenuItem key={index}>
+                    <SidebarMenuButton>
+                      <Link href={items.href || "#"}>{items.title}</Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarContent className="border-t pt-4 px-4">
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-md font-medium mb-2">
+            Price
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            {/* Example range filter */}
+            <div className="flex flex-col gap-2 text-sm">
+              <label>
+                Min: <input type="number" className="border p-1 rounded w-full" />
+              </label>
+              <label>
+                Max: <input type="number" className="border p-1 rounded w-full" />
+              </label>
+              <button className="mt-2 bg-black text-white p-1 rounded">
+                Apply
+              </button>
+            </div>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      </ScrollArea>
     </Sidebar>
   );
-};
-
-export default AppSidebar;
+}

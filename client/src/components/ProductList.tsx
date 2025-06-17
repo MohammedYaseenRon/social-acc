@@ -91,11 +91,11 @@ const ProductList = ({ products }: ProductListProps) => {
 
             <div className="flex flex-col md:flex-row gap-4 sm:gap-8">
                 {/* Sidebar */}
-                <div className={`w-full md:w-64 ${sidebarOpen ? "block" : "hidden md:block"} transition-all duration-200`}>
+                {/* <div className={`w-full md:w-64 ${sidebarOpen ? "block" : "hidden md:block"} transition-all duration-200`}>
                     <div>
                         <Pricerange />
                     </div>
-                </div>
+                </div> */}
 
                 {/* Main Content */}
                 <div className="flex-1">

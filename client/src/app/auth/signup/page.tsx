@@ -23,7 +23,7 @@ interface SignupProps {
     name: string,
     email: string,
     password: string,
-    role:string
+    role: string
 }
 
 export default function Signup() {
@@ -31,7 +31,7 @@ export default function Signup() {
         name: "",
         email: "",
         password: "",
-        role:"USER",
+        role: "USER",
 
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -42,9 +42,13 @@ export default function Signup() {
     useEffect(() => {
         setFormData((prev) => ({
             ...prev,
-            role: activeTab === "vendor" ? "USER" : "VENDOR",
+            role: activeTab === "vendor" ? "VENDOR" : "USER",
         }));
     }, [activeTab]);
+    useEffect(() => {
+        console.log("Form Data:", formData);
+    }, [formData]);
+
 
     const handleChange = (name: string, value: string) => {
         setFormData({ ...formData, [name]: value });
@@ -83,9 +87,10 @@ export default function Signup() {
             if (response.status === 201) {
                 const { token, user } = response.data;
                 localStorage.setItem('token', token);
-                setFormData({ name: '', email: '', password: '', role:"USER" });
+                setFormData({ name: '', email: '', password: '', role: "USER" });
                 router.push("/");
             }
+            console.log(response.data);
 
         } catch (error: unknown) {
             if (error instanceof Error) {

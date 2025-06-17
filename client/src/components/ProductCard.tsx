@@ -37,10 +37,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   
     try {
-      // Just pass productId and quantity — userId is handled via token on backend
       await addToCart(id, 1); // 👈 Updated call
   
-      // Then open the cart
       openCart();
     } catch (error) {
       console.error("Failed to add item to cart:", error);

@@ -10,17 +10,13 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
         res.status(401).json({ message: "Unauthorized: User ID missing" });
         return;
     }
+
     try {
         const { name, price, sku, stock, categoryName, isActive, status } = req.body;
-        console.log("Body:", req.body);
         const files = req.files as Express.Multer.File[];
-        console.log("FILES:", req.files);
-
 
         const vendor = await prisma.vendor.findUnique({
-            where: {
-                userId: userId,
-            },
+            where: { userId: userId },
         });
 
         if (!vendor) {
@@ -28,28 +24,23 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        const vendorId = vendor.id;
-
-
         if (!name || !price || !sku || !stock || !status || !categoryName) {
             res.status(400).json({ message: "All fields are required" });
-            return
+            return;
         }
 
         const images = files.map(file => (file as any).path);
 
         let category = await prisma.category.findUnique({
-            where: {
-                name: categoryName.trim()
-            }
+            where: { name: categoryName.trim() }
         });
+
         if (!category) {
             category = await prisma.category.create({
-                data: {
-                    name: categoryName.trim()
-                }
-            })
+                data: { name: categoryName.trim() }
+            });
         }
+
         const product = await prisma.product.create({
             data: {
                 name,
@@ -60,20 +51,19 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
                 isActive: isActive === "true" || isActive === true,
                 status: status.toUpperCase().replace(' ', '_'),
                 categoryId: category.id,
-                vendorId: vendorId
+                vendorId: vendor.id
             },
             include: {
                 category: true
             }
         });
+
         res.status(201).json({ message: "Product added successfully", product });
     } catch (error: any) {
-        console.error("Error creating product:", error?.message);
-        console.error("Stack:", error?.stack);
-        console.error("Full Error Object:", JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
         res.status(500).json({ message: "Internal server error" });
     }
-}
+};
+
 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -162,11 +152,11 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
             },
             include: {
                 products: {
-                    include:{
-                        category:{
-                            select:{
-                                id:true,
-                                name:true
+                    include: {
+                        category: {
+                            select: {
+                                id: true,
+                                name: true
                             }
                         }
                     }
