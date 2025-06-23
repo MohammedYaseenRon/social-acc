@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,45 +17,45 @@ model User {
   phone              String?
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  vendor             Vendor?
-  vendorRequest      VendorRequest?
   cart               Cart?
   orders             Order[]
   payments           Payment[]
-  reviews            Review[]
-  wishList           WishList[]
   resetPasswordToken ResetPasswordToken[]
+  reviews            Review[]
+  vendor             Vendor?
+  vendorRequest      VendorRequest?
+  wishList           WishList[]
 }
 
 model ResetPasswordToken {
   id        Int      @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   token     String   @unique
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model VendorRequest {
   id        Int           @id @default(autoincrement())
   userId    Int           @unique
-  user      User          @relation(fields: [userId], references: [id])
   status    RequestStatus
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+  user      User          @relation(fields: [userId], references: [id])
 }
 
 model Vendor {
   id               Int       @id @default(autoincrement())
   userId           Int       @unique
-  user             User      @relation(fields: [userId], references: [id])
   storeName        String
   storeDescription String?
   logo             String?
   isActive         Boolean   @default(false)
-  products         Product[]
   Order            Order[]
+  products         Product[]
+  user             User      @relation(fields: [userId], references: [id])
 }
 
 model Product {
@@ -73,41 +67,40 @@ model Product {
   stock       Int           @default(0)
   images      String[]
   isActive    Boolean       @default(true)
-  status      ProductStatus @default(INSTOCK)
   createdAt   DateTime      @default(now())
-  vendorId    Int?
-  Vendor      Vendor?       @relation(fields: [vendorId], references: [id])
   categoryId  Int?
-  category    Category?     @relation(fields: [categoryId], references: [id])
-  orderItems  OrderItem[]
+  status      ProductStatus @default(INSTOCK)
+  vendorId    Int?
+  slug        String        @unique
   cartItems   CartItem[]
+  orderItems  OrderItem[]
+  category    Category?     @relation(fields: [categoryId], references: [id])
+  vendor      Vendor?       @relation(fields: [vendorId], references: [id])
   reviews     Review[]
   wishList    WishList[]
 }
 
 model Category {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
-  description String?
-  createdAt   DateTime  @default(now())
+  id            Int        @id @default(autoincrement())
+  name          String     @unique
+  description   String?
+  createdAt     DateTime   @default(now())
+  parentId      Int?
+  parent        Category?  @relation("CategoryToSubcategory", fields: [parentId], references: [id])
+  subcategories Category[] @relation("CategoryToSubcategory")
+  products      Product[]
 
-  //clear parent-child hierarchy.
-  parentId   Int?
-  parent   Category?  @relation("CategoryToSubcategory", fields: [parentId],references: [id])
-  subcategories   Category[] @relation("CategoryToSubcategory")
-  products    Product[]
-
-  @@unique([name,parentId])
+  @@unique([name, parentId])
 }
 
 model Order {
   id          Int         @id @default(autoincrement())
   userId      Int
-  user        User        @relation(fields: [userId], references: [id])
   totalAmount Float
   status      OrderStatus @default(PENDING)
   createdAt   DateTime    @default(now())
   vendorId    Int
+  user        User        @relation(fields: [userId], references: [id])
   vendor      Vendor      @relation(fields: [vendorId], references: [id])
   orderItems  OrderItem[]
   payment     Payment[]
@@ -116,29 +109,29 @@ model Order {
 model OrderItem {
   id        Int      @id @default(autoincrement())
   orderId   Int
-  order     Order    @relation(fields: [orderId], references: [id])
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
   createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
 }
 
 model Cart {
   id        Int        @id @default(autoincrement())
   userId    Int        @unique
+  createdAt DateTime   @default(now())
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
-  createdAt DateTime   @default(now())
 }
 
 model CartItem {
   id        Int     @id @default(autoincrement())
   cartId    Int
-  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int     @default(1)
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, cartId])
 }
@@ -146,34 +139,34 @@ model CartItem {
 model Payment {
   id            Int           @id @default(autoincrement())
   userId        Int
-  user          User          @relation(fields: [userId], references: [id])
   orderId       Int
-  order         Order         @relation(fields: [orderId], references: [id])
   amount        Float
   transactionId String?
   paymentMethod PaymentMethod
   paymentStatus PaymentStatus
   createdAt     DateTime      @default(now())
+  order         Order         @relation(fields: [orderId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
 }
 
 model Review {
   id        Int      @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
   rating    Int
   comment   String?
   createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model WishList {
   id        Int      @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
   createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 enum PaymentMethod {

@@ -2,8 +2,10 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import AnimatedLayout from "@/components/AnimateLayout";
+import { Category } from "@/state/types";
+import SidebarWrapper from "@/components/Sidewrapper";
 
-async function getCategories() {
+async function getCategories():Promise<Category[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
     cache: "no-store" // optional: prevents stale data
   });
@@ -19,20 +21,15 @@ export default async function ProductsLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Fixed or regular Navbar at the top */}
       <Navbar />
 
       <div className="flex flex-1">
-        <SidebarProvider>
-          <AppSidebar categories={categories} />
-
+        <SidebarWrapper categories={categories} />
           <div className="flex-1 p-4 bg-gray-50 min-h-screen">
             <AnimatedLayout>
-              {/* <SidebarTrigger  className="mt-12"/> */}
               {children}
             </AnimatedLayout>
           </div>
-        </SidebarProvider>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client"
+import { Button } from '@/components/ui/button';
 import axios from 'axios';
-import { X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import React, { ChangeEvent, useEffect, useState } from 'react'
 
 interface AddpageProps {
@@ -32,6 +33,7 @@ const Addpage: React.FC<AddpageProps> = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [addCategory, setAddCategory] = useState(false);
 
 
   useEffect(() => {
@@ -119,11 +121,9 @@ const Addpage: React.FC<AddpageProps> = () => {
         });
         setImages([]);
         setSelectedFiles([]);
-      } else {
-        alert("Something went wrong, please try again.");
       }
-    } catch (error: any) {
-      alert("Something went wrong, please try again.");
+    } catch (error) {
+      console.error("Error while creating prodcuts", error)
     } finally {
       setLoading(false);
     }
@@ -158,30 +158,35 @@ const Addpage: React.FC<AddpageProps> = () => {
 
         {/* Category and Status in a grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <label htmlFor="category" className="block text-sm font-medium text-gray-700">
               Category <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select Category</option>
-                {categories?.map((category, index) => (
-                  <option key={index} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Category</option>
+                  {categories?.map((category, index) => (
+                    <option key={index} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
+              <Button onClick={() => setAddCategory(!addCategory)} className='h-11 w-11 min-w-[44px] flex items-center justify-center border text-black bg-white hover:bg-gray-200'>
+                <Plus className='w-2 h-8' />
+              </Button>
             </div>
           </div>
 
@@ -209,6 +214,31 @@ const Addpage: React.FC<AddpageProps> = () => {
             </div>
           </div>
         </div>
+        {addCategory && (
+          <div className="space-y-2 ">
+            <div className='flex items-end gap-6'>
+              <div className='space-y-2 flex-1'>
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                  Add Category  <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="addCategory"
+                  id="addCategory"
+                  name="addcategory"
+                  // value={formData.price}
+                  onChange={handleInputChange}
+                  className="w-full pl-4 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Add Category"
+                />
+              </div>
+              <div className='pt-7'>
+                <Button className='h-10 bg-blue-600 text-black'>
+                  Save
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Price and Image Upload */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

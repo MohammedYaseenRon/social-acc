@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client"
+import slugify from 'slugify';
 
 const prisma = new PrismaClient();
 
@@ -40,6 +41,9 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
                 data: { name: categoryName.trim() }
             });
         }
+        // Generate slug from name
+        const slug = slugify(name, { lower: true, strict: true });
+
 
         const product = await prisma.product.create({
             data: {
@@ -51,7 +55,9 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
                 isActive: isActive === "true" || isActive === true,
                 status: status.toUpperCase().replace(' ', '_'),
                 categoryId: category.id,
-                vendorId: vendor.id
+                vendorId: vendor.id,
+                slug
+
             },
             include: {
                 category: true
@@ -116,7 +122,7 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
             where: filters,
             include: {
                 category: true,
-                Vendor: {
+                vendor: {
                     select: {
                         id: true,
                         storeName: true
@@ -226,7 +232,7 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
                         }
                     }
                 },
-                Vendor: true
+                vendor: true
             }
         })
 
@@ -240,3 +246,64 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
         res.status(500).json({ message: "Server error while getting prodcts by category" });
     }
 }
+
+export const getProductsBySlug = async (req: Request, res: Response): Promise<void> => {
+    const { slug } = req.params;
+
+    console.log("🧩 Fetching product with slug:", slug);
+
+    // Validate slug parameter
+    if (!slug || typeof slug !== 'string') {
+        console.log("⚠️ Invalid slug parameter");
+        res.status(400).json({ message: "Invalid slug parameter" });
+        return;
+    }
+
+    try {
+        console.log("🔍 Starting database query for slug:", slug);
+
+        const product = await prisma.product.findUnique({
+            where: {
+                slug: slug.trim()
+            },
+            include: {
+                category: true,
+                vendor: true,
+            },
+        });
+
+        console.log("🔍 Query completed. Product found:", !!product);
+
+        if (!product) {
+            console.log("⚠️ Product not found for slug:", slug);
+            res.status(404).json({ message: "Product not found" });
+            return;
+        }
+
+        console.log("✅ Product found:", product.name);
+
+        // // Ensure response is properly formatted
+        // const response = {
+        //     id: product.id,
+        //     name: product.name,
+        //     slug: product.slug,
+        //     price: product.price,
+        //     sku: product.sku,
+        //     stock: product.stock,
+        //     status: product.status,
+        //     description: product.description,
+        //     images: product.images,
+        //     category: product.category,
+        //     vendor: product.vendor,
+        //     createdAt: product.createdAt
+        // };
+
+        res.status(200).json(product);
+        console.log("✅ Response sent successfully");
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Database error occurred",
+        });
+    }
+};

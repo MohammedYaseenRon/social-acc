@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProduct, getProducts, getProductsById, updateProduct, deleteProduct, getProductsByCategory } from "../controller/productController";
+import { createProduct, getProducts, getProductsById, updateProduct, deleteProduct, getProductsByCategory, getProductsBySlug } from "../controller/productController";
 import upload from "../middleware/upload";
 import { authenticateToken } from "../middleware/auth";
 
@@ -11,5 +11,8 @@ router.get("/:id", getProductsById);
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
 router.get("/category/:name", getProductsByCategory);
+router.get("/details/:slug", getProductsBySlug);
+
+
 
 export default router;
