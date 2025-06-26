@@ -1,8 +1,19 @@
 "use client"
-import { Button } from '@/components/ui/button';
 import axios from 'axios';
-import { Plus, X } from 'lucide-react';
+import { ChevronDown, Plus, X } from 'lucide-react';
 import React, { ChangeEvent, useEffect, useState } from 'react'
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 
 interface AddpageProps {
   name: string;
@@ -14,9 +25,15 @@ interface AddpageProps {
   stock: number
 }
 
-interface Category {
-  id: string;
-  name: string;
+interface CategoryProps {
+  categories: {
+    id: number;
+    name: string;
+    subcategories: {
+      id: number;
+      name: string;
+    }[];
+  }[];
 }
 
 const Addpage: React.FC<AddpageProps> = () => {
@@ -32,15 +49,18 @@ const Addpage: React.FC<AddpageProps> = () => {
   const [images, setImages] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryProps["categories"]>([]);
   const [addCategory, setAddCategory] = useState(false);
+  const [selectedCategoryDisplay, setSelectedCategoryDisplay] = useState<string>("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
-        setCategories(response.data);
+        setCategories(response.data.categories || response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -69,6 +89,15 @@ const Addpage: React.FC<AddpageProps> = () => {
   }
   const removeImage = (index: number) => {
     setImages((images.filter((_, i) => i !== index)));
+  }
+
+  const handleCategorySelect = (categoryName: string, subcategoryName: string) => {
+    const displayText = `${categoryName} - ${subcategoryName}`;
+    setSelectedCategoryDisplay(displayText);
+    setFormData({
+      ...formData,
+      category: subcategoryName
+    });
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,6 +150,7 @@ const Addpage: React.FC<AddpageProps> = () => {
         });
         setImages([]);
         setSelectedFiles([]);
+        setSelectedCategoryDisplay("");
       }
     } catch (error) {
       console.error("Error while creating prodcuts", error)
@@ -162,33 +192,64 @@ const Addpage: React.FC<AddpageProps> = () => {
             <label htmlFor="category" className="block text-sm font-medium text-gray-700">
               Category <span className="text-red-500">*</span>
             </label>
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1">
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg appearance-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            <div className="flex items-center gap-2 relative">
+              <div className="flex-1">
+                <button
+                  type="button"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="w-full flex justify-between items-center px-3 py-2 border border-gray-300 rounded-lg bg-white text-left"
                 >
-                  <option value="">Select Category</option>
-                  {categories?.map((category, index) => (
-                    <option key={index} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+                  <span className={selectedCategoryDisplay ? "text-gray-900" : "text-gray-500"}>
+                    {selectedCategoryDisplay || "Select Category"}
+                  </span>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute z-50 mt-2 w-full bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    {categories.length > 0 ? (
+                      categories.map((category) => (
+                        <div key={category.id} className="border-b border-gray-100">
+                          <div className="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-50">
+                            {category.name}
+                          </div>
+                          {category.subcategories.length > 0 ? (
+                            category.subcategories.map((subcat) => (
+                              <div
+                                key={subcat.id}
+                                onClick={() => {
+                                  handleCategorySelect(category.name, subcat.name);
+                                  setDropdownOpen(false);
+                                }}
+                                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                              >
+                                {subcat.name}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="px-4 py-2 text-sm text-gray-400">No subcategories</div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-sm text-gray-400">No categories available</div>
+                    )}
+                  </div>
+                )}
               </div>
-              <Button onClick={() => setAddCategory(!addCategory)} className='h-11 w-11 min-w-[44px] flex items-center justify-center border text-black bg-white hover:bg-gray-200'>
-                <Plus className='w-2 h-8' />
+
+              <Button
+                type="button"
+                onClick={() => setAddCategory(!addCategory)}
+                variant="outline"
+                size="icon"
+                className="h-10 w-10"
+              >
+                <Plus className="h-4 w-4" />
               </Button>
             </div>
           </div>
+
 
           <div className="space-y-2">
             <label htmlFor="status" className="block text-sm font-medium text-gray-700">

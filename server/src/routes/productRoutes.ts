@@ -10,7 +10,7 @@ router.get("/", getProducts);
 router.get("/:id", getProductsById);
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
-router.get("/category/:name", getProductsByCategory);
+router.get("/category/:id", getProductsByCategory);
 router.get("/details/:slug", getProductsBySlug);
 
 

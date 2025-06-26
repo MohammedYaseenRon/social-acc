@@ -198,19 +198,27 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
 }
 
 export const getProductsByCategory = async (req: Request, res: Response): Promise<void> => {
-    const { name } = req.params;
+    const { id } = req.params;
 
 
-    if (!name) {
-        res.status(400).json({ message: "Category name is required" });
+    if (!id) {
+        res.status(400).json({ message: "Category id is required" });
         return;
     }
 
     try {
         const category = await prisma.category.findUnique({
             where: {
-                name
+                id: Number(id)
             },
+            include:{
+                parent:{
+                    select:{
+                        id:true,
+                        name:true,
+                    }
+                }
+            }
         });
         if (!category) {
             res.status(404).json({ message: "Category not found" });
@@ -224,10 +232,10 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
             include: {
                 category: {
                     include: {
-                        subcategories: {
-                            select: {
-                                id: true,
-                                name: true
+                        parent:{
+                            select:{
+                                id:true,
+                                name:true
                             }
                         }
                     }
@@ -239,6 +247,7 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
 
         res.status(200).json({
             category: category.name,
+            parentCategory: category.parent?.name || null,
             products
         });
     } catch (error) {
@@ -281,23 +290,6 @@ export const getProductsBySlug = async (req: Request, res: Response): Promise<vo
         }
 
         console.log("✅ Product found:", product.name);
-
-        // // Ensure response is properly formatted
-        // const response = {
-        //     id: product.id,
-        //     name: product.name,
-        //     slug: product.slug,
-        //     price: product.price,
-        //     sku: product.sku,
-        //     stock: product.stock,
-        //     status: product.status,
-        //     description: product.description,
-        //     images: product.images,
-        //     category: product.category,
-        //     vendor: product.vendor,
-        //     createdAt: product.createdAt
-        // };
-
         res.status(200).json(product);
         console.log("✅ Response sent successfully");
 

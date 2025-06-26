@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion } from "framer-motion";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Heart, Share2, Star, Minus, Plus } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, Star, Minus, Plus, ArrowLeft } from 'lucide-react';
 import { ProductProps } from '@/state/types';
 import RelatedProducts from './RelatedProduct';
 

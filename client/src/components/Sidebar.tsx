@@ -61,7 +61,7 @@ export function AppSidebar({ categories }: SidebarProps) {
                                 key={sub.id}
                                 className="w-full hover:bg-gray-100 p-2 rounded-lg"
                               >
-                                <Link href={`/category/${sub.id}`}>{sub.name}</Link>
+                                <Link href={`/products/category/${sub.id}`}>{sub.name}</Link>
                               </SidebarMenuSubItem>
                             ))}
                           </SidebarMenuSub>
@@ -71,7 +71,7 @@ export function AppSidebar({ categories }: SidebarProps) {
                   ) : (
                     <SidebarMenuItem key={cat.id}>
                       <SidebarMenuButton>
-                        <Link href={`/category/${cat.id}`}>{cat.name}</Link>
+                        <Link href={`/products/category/${cat.id}`}>{cat.name}</Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   )
