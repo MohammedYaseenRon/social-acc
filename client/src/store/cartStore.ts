@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { CartItem } from "@/state/types";
+import { CartItem, ProductProps } from "@/state/types";
 import axios from "axios";
 
 interface CartStore {
@@ -13,7 +13,7 @@ interface CartStore {
 
     // api action
     fetchCart: () => Promise<void>;
-    addToCart: (productId: number, quantity: number) => void;
+    addToCart: (product:ProductProps, quantity: number) => void;
     updateQuantity: (itemId: number, newQuantity: number) => Promise<void>;
     removeItem: (itemId: number) => Promise<void>;
     clearCart: (userId: number) => Promise<void>;
@@ -44,14 +44,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log("Cart API Response:", response.data); 
-            set({ items: Array.isArray(response.data) ? response.data : response.data.cartItems, isLoading: false });
+            console.log("Cart API Response:", response.data);
+            set({ items: Array.isArray(response.data.items) ? response.data.items : [], isLoading: false });
         } catch (error) {
             set({ error: 'Failed to fetch cart', isLoading: false });
         }
     },
 
-    addToCart: async (productId: number, quantity: number) => {
+    addToCart: async (product: ProductProps, quantity: number) => {
         set({ isLoading: true, error: null });
         const token = localStorage.getItem("token");
         if (!token) {
@@ -60,7 +60,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         }
 
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/cart/add`, { productId, quantity }, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/cart/add`, { productId:product.id, quantity }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -78,7 +78,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     updateQuantity: async (itemId: number, quantity: number) => {
         set({ isLoading: true, error: null });
         try {
-            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/cart/${itemId}`, { quantity });
+            await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/cart/item/${itemId}`, { quantity });
             set(state => ({
                 items: state.items.map(item => item.id === itemId ? { ...item, quantity } : item),
                 isLoading: false
@@ -91,7 +91,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     removeItem: async (itemId: number) => {
         set({ isLoading: true, error: null });
         try {
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/cart/${itemId}`);
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/cart/item/${itemId}`);
             set(state => ({
                 items: state.items.filter(item => item.id !== itemId),
                 isLoading: false

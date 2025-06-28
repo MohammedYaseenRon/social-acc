@@ -93,7 +93,7 @@ export const getCart = async (req: Request, res: Response): Promise<void> => {
 }
 
 export const updateCartItem = async (req: Request, res: Response): Promise<void> => {
-    const itemsId = parseInt(req.params.itemsId)
+    const itemsId = parseInt(req.params.itemId)
     const { quantity } = req.body;
 
     try {
@@ -105,7 +105,7 @@ export const updateCartItem = async (req: Request, res: Response): Promise<void>
                 quantity
             }
         });
-        res.status(200).json({ message: "Cart item updated" });
+        res.status(200).json({ message: "Cart item updated",updateItem });
     } catch (error) {
         console.error("Get cartItem update error", error);
         res.status(500).json({ message: "Internal server error" });

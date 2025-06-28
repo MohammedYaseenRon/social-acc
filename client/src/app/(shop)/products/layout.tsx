@@ -1,9 +1,8 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/Sidebar";
-import Navbar from "@/components/Navbar";
 import AnimatedLayout from "@/components/AnimateLayout";
 import { Category } from "@/state/types";
 import SidebarWrapper from "@/components/Sidewrapper";
+import CartModal from "@/components/CartModal";
+import Header from "@/components/admin/Header";
 
 async function getCategories():Promise<Category[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
@@ -21,7 +20,7 @@ export default async function ProductsLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Header name="Market Place"/>
 
       <div className="flex flex-1">
         <SidebarWrapper categories={categories} />
@@ -31,6 +30,7 @@ export default async function ProductsLayout({
             </AnimatedLayout>
           </div>
       </div>
+      <CartModal />
     </div>
   );
 };

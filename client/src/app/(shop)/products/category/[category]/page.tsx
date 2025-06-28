@@ -46,15 +46,7 @@ export default function CategoryProductsPage() {
           {products.map((product: any) => (
             <ProductCard
               key={product.id}
-              id={product.id}
-              title={product.name}
-              price={product.price}
-              imageUrl={Array.isArray(product.images) ? product.images[0] : product.images}
-              category={product.category?.name || "Uncategorized"}
-              status={product.status === "INSTOCK" ? "in-stock" : "out-of-stock"}
-              stock={product.stock}
-              sku={product.sku}
-
+              product={product}
             />
           ))}
         </div>

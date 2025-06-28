@@ -29,16 +29,7 @@ export default function ProductsPage() {
         <div className="grid grid-cols-2 lg:grid-cols-3 md:grid-cols-3 gap-12 cursor-pointer">
           {products?.map((product) => (
             <Link href={`/products/${product.slug}`}>
-              <ProductCard
-                key={product.id}
-                title={product.name}
-                price={product.price}
-                category={product.category?.name || ''}
-                stock={product.stock}
-                sku={product.sku}
-                imageUrl={Array.isArray(product.images) ? product.images[0] : product.images}
-                status={product.status === 'INSTOCK' ? 'in-stock' : 'out-of-stock'}
-
+              <ProductCard key={product.id} product={product}
               /></Link>
           ))}
         </div>

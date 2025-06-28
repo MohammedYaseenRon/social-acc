@@ -225,13 +225,13 @@ const ProductList = ({ products }: ProductListProps) => {
                     </div>
                 </div>
             </div>
-            <CartModal
+            {/* <CartModal
                 isOpen={isOpen}
                 onClose={closeCart}
                 cartItems={mappedCartItems}
                 onUpdateQuantity={updateQuantity}
                 onRemoveItem={removeItem}
-            />
+            /> */}
         </div>
     )
 }

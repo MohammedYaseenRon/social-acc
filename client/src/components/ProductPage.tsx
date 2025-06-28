@@ -8,12 +8,16 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart, Heart, Share2, Star, Minus, Plus, ArrowLeft } from 'lucide-react';
 import { ProductProps } from '@/state/types';
 import RelatedProducts from './RelatedProduct';
+import Link from 'next/link';
+import { useCartStore } from '@/store/cartStore';
+
 
 interface ProductPageClientProps {
     product: ProductProps;
 }
 
 export default function ProductPageClient({ product }: ProductPageClientProps) {
+    const { addToCart } = useCartStore();
     const [quantity, setQuantity] = useState(1);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
@@ -22,12 +26,15 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         product.images ? [product.images] : [];
 
     const onAddToCart = () => {
-        // Add your cart logic here
-        console.log(`Adding ${quantity} of ${product.name} to cart`);
+        try {
+            addToCart(product, quantity);
+            console.log(`Adding ${quantity} of ${product.name} to cart`);
+        } catch (error) {
+            console.error("Error adding to cart:", error);
+        }
     };
 
     const onBuyNow = () => {
-        // Add your buy now logic here
         console.log(`Buying ${quantity} of ${product.name}`);
     };
 
@@ -45,6 +52,10 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+            <div className='flex items-center gap-2 mb-4'>
+                <Link href="/products" ><ArrowLeft className='w-4 h-4' /></Link>
+                <h2 className='text-black font-medium text-base'>Go Back</h2>
+            </div>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
                 {/* Product Images */}
                 {images.length > 0 && (

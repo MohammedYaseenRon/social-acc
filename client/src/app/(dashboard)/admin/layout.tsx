@@ -67,7 +67,7 @@ const layout: React.FC<{ children: ReactNode }> = ({ children }) => {
         <div className='flex h-screen bg-gray-100'>
             <Sidebar menuItems={menu} />
             <div className='flex-1 flex flex-col overflow-hidden'>
-                <Header />
+                <Header name='Admin Dashboard' />
 
                 <motion.main
                     className="flex-1 overflow-y-auto p-4"
