@@ -4,6 +4,7 @@ export interface PriceRangeSelectorProps {
     minLimit?: number;
     maxLimit?: number;
     step?: number;
+    onChange?:(range: [number, number]) => void;
 }
 
 export interface ProductCardProps {

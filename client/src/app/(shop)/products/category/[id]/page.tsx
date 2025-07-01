@@ -4,10 +4,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductProps } from "@/state/types";
 
 export default function CategoryProductsPage() {
   const { id } = useParams();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<ProductProps[]>([]);
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(true);
   const [parentCategoryName, setParentCategoryName] = useState("");
@@ -15,19 +16,21 @@ export default function CategoryProductsPage() {
   useEffect(() => {
     const fetchProductsByCategory = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/category/${id}`);
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/products/category/${id}`
+
+
+        const res = await axios.get(url);
         setProducts(res.data.products || []);
         setCategoryName(res.data.category || "");
         setParentCategoryName(res.data.parentCategory || "")
-        console.log(res.data);
-      } catch (err) {
+      } catch (err:any) {
         console.error("Error fetching products by category:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) fetchProductsByCategory();
+    fetchProductsByCategory();
   }, [id]);
 
   return (
@@ -43,7 +46,7 @@ export default function CategoryProductsPage() {
         <p>Loading...</p>
       ) : products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product: any) => (
+          {products.map((product) => (
             <ProductCard
               key={product.id}
               product={product}

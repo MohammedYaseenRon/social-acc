@@ -74,6 +74,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
     try {
         const {
+            query= "",
             category,
             minPrice,
             maxPrice,
@@ -87,6 +88,17 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
         const limitNum = Math.max(1, parseInt(limitStr, 10));
 
         const filters: any = {};
+        if(query) {
+            filters.OR = [
+                {name: {contains: query, mode: "insensitive"}},
+                {
+                    category:{
+                       name: {contains:query, mode: "insensitive"}
+                    }
+                }
+
+            ]
+        }
         if (category) {
             const foundCategory = await prisma.category.findUnique({
                 where: {
@@ -102,7 +114,7 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
         if (minPrice || maxPrice) {
             filters.price = {};
             if (minPrice) filters.price.gte = parseFloat(minPrice);
-            if (maxPrice) filters.price.gte = parseFloat(maxPrice);
+            if (maxPrice) filters.price.lte = parseFloat(maxPrice);
 
         }
 
@@ -133,7 +145,11 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
             skip: (pageNum - 1) * limitNum,
             take: limitNum
         });
-        res.status(200).json(products);
+
+        const total =await prisma.product.count({
+            where: filters
+        })
+        res.status(200).json({products, total});
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
     }
@@ -191,6 +207,7 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
                 category: true
             }
         });
+
         res.status(200).json({ message: "Product deleted successfully", product });
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });

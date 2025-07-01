@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +15,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collap
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
+import Pricerange from "./Pricerange";
+import { useProductStore } from "@/store/productStore";
 
 
 interface SidebarProps {
@@ -30,6 +32,18 @@ interface SidebarProps {
 
 
 export function AppSidebar({ categories }: SidebarProps) {
+  const { fetchProducts } = useProductStore();
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handlePriceChange = useCallback((range: [number, number]) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(() => {
+      fetchProducts({ minPrice: range[0], maxPrice: range[1] });
+    }, 300);
+  }, [fetchProducts]);
+
+
   return (
     <Sidebar className="flex flex-col h-full">
       <ScrollArea className="min-h-screen" >
@@ -86,18 +100,7 @@ export function AppSidebar({ categories }: SidebarProps) {
               Price
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              {/* Example range filter */}
-              <div className="flex flex-col gap-2 text-sm">
-                <label>
-                  Min: <input type="number" className="border p-1 rounded w-full" />
-                </label>
-                <label>
-                  Max: <input type="number" className="border p-1 rounded w-full" />
-                </label>
-                <button className="mt-2 bg-black text-white p-1 rounded">
-                  Apply
-                </button>
-              </div>
+              <Pricerange onChange={handlePriceChange} />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>

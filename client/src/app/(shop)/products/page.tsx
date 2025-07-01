@@ -3,24 +3,25 @@
 import { ProductCard } from "@/components/ProductCard";
 import { useProductStore } from "@/store/productStore";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 
 
 export default function ProductsPage() {
-  const { products, loading, error, fetchProducts } = useProductStore();
+  const { products, total,setFilters, fetchProducts } = useProductStore();
   const [category, setCategory] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [status, setStatus] = useState('');
+
   const [sortBy, setSortBy] = useState('latest');
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
 
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query") || "";
 
   useEffect(() => {
-    fetchProducts({ category, minPrice, maxPrice, status, sortBy, page, limit });
-  }, [category, minPrice, maxPrice, status, sortBy, page]);
+    fetchProducts({ category, sortBy, page, limit,query });
+  }, [category,sortBy, page,query]);
 
 
   return (

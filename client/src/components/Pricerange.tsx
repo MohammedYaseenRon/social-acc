@@ -6,14 +6,16 @@ const Pricerange: React.FC<PriceRangeSelectorProps> = ({
     minInitialPrice = 0,
     maxInitialPrice = 1000,
     minLimit = 0,
-    maxLimit = 50000,
-    step = 10
+    maxLimit = 100000,
+    step = 10,
+    onChange
+
 }) => {
     const [priceRange, setPriceRange] = useState([
         minInitialPrice, maxInitialPrice
     ]);
 
-    const formatedPrice = (price:number): string => {
+    const formatedPrice = (price: number): string => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
             currency: 'INR',
@@ -24,11 +26,14 @@ const Pricerange: React.FC<PriceRangeSelectorProps> = ({
 
     const handlePriceRange = (values: [number, number]) => {
         setPriceRange(values);
-    }
+        if (onChange) {
+            onChange(values);
+        }
+    };
     return (
-        <div className='max-w-xs p-6 bg-white shadow-lg rounded-lg'>
+        <div className='max-w-xs p-4 border rounded-lg'>
             <h2 className='text-lg text-black font-medium'>Filter by Price</h2>
-            <div className='flex justify-between mb-4'>
+            <div className='flex flex-col gap-4 mb-4'>
                 <div className='bg-gray-100 text-black rounded-lg p-2'>
                     <span className='text-sm text-gray-400'>Min:</span>
                     <span className='font-bold ml-2'>{formatedPrice(priceRange[0])}</span>
