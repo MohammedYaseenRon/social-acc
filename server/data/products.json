@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Mastering JavaScript",
+    "price": 499,
+    "stock": 100,
+    "sku": "JS-001",
+    "status": "INSTOCK",
+    "isActive": true,
+    "category": "E-books",
+    "images": ["https://via.placeholder.com/300x300?text=JS+Book"],
+    "vendorEmail": "apple012@gmail.com",
+    "slug": "mastering-javascript"
+  },
+  {
+    "name": "Digital Music Studio Pack",
+    "description": "Premium music samples and loops for content creators.",
+    "price": 799,
+    "stock": 50,
+    "sku": "MUS-002",
+    "status": "INSTOCK",
+    "isActive": true,
+    "category": "Music",
+    "images": ["https://via.placeholder.com/300x300?text=Music+Pack"],
+    "vendorEmail": "mark01@gmail.com",
+    "slug": "digital-music-studio-pack"
+  },
+  {
+    "name": "Men's Leather Jacket",
+    "description": "Stylish and durable jacket for winter wear.",
+    "price": 2599,
+    "stock": 30,
+    "sku": "JACK-001",
+    "status": "INSTOCK",
+    "isActive": true,
+    "category": "Jackets",
+    "images": ["https://via.placeholder.com/300x300?text=Leather+Jacket"],
+    "vendorEmail": "mark01@gmail.com",
+    "slug": "mens-leather-jacket"
+  },
+  {
+    "name": "Mobile Fast Charger",
+    "description": "Superfast Type-C charger compatible with Android and iOS.",
+    "price": 899,
+    "stock": 0,
+    "sku": "CHR-404",
+    "status": "OUT_OF_STOCK",
+    "isActive": true,
+    "category": "Chargers",
+    "images": ["https://via.placeholder.com/300x300?text=Fast+Charger"],
+    "vendorEmail": "apple012@gmail.com",
+    "slug": "mobile-fast-charger"
+  },
+  {
+    "name": "E-Book: React Native Essentials",
+    "description": "Build cross-platform apps using React Native.",
+    "price": 299,
+    "stock": 70,
+    "sku": "RN-BOOK-02",
+    "status": "INSTOCK",
+    "isActive": true,
+    "category": "E-books",
+    "images": ["https://via.placeholder.com/300x300?text=React+Native"],
+    "vendorEmail": "apple012@gmail.com",
+    "slug": "react-native-essentials"
+  }
+]

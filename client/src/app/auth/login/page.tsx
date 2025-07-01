@@ -15,6 +15,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
+import { useUserStore } from "@/store/userStore";
 
 
 
@@ -34,6 +35,8 @@ export default function Signup() {
     const [errors, setErrors] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const {setUser} = useUserStore();
+
 
     useEffect(() => {
         setFormData({ email: "", password: "" });
@@ -73,6 +76,7 @@ export default function Signup() {
                 setFormData({ email: '', password: '' });
                 const { token, user } = response.data;
                 localStorage.setItem('token', token);
+                setUser(user);
 
                 if (user.role == "ADMIN") {
                     router.push("/superAdmin");

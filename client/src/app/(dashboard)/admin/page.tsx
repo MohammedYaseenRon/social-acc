@@ -6,9 +6,6 @@ import {
   Download,
   Users,
   DollarSign,
-  Store,
-  Layers,
-  BarChart4
 } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import RecentOrder from '@/components/admin/RecentOrder';

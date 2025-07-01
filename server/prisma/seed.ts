@@ -1,7 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, ProductStatus } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-const prisma = new PrismaClient();
 import * as dotenv from "dotenv";
+import productsData from  '../data/products.json'
+
+const prisma = new PrismaClient();
 
 dotenv.config();
 
@@ -11,8 +13,8 @@ export async function main() {
     const mainCategories = [
         "Digital Products", "Clothing & Accessories", "Electronics"
     ];
-    const maincat: {[key:string]: number} = {}
-    
+    const maincat: { [key: string]: number } = {}
+
     for (const name of mainCategories) {
         const cat = await prisma.category.upsert({
             where: { name },
@@ -21,7 +23,7 @@ export async function main() {
                 name, parentId: null
             },
         });
-        maincat[name] = cat.id; 
+        maincat[name] = cat.id;
     }
 
     const subcategories = [
@@ -86,6 +88,55 @@ export async function main() {
     } else {
         console.log(" SuperAdmin already exists");
     }
+
+    //Seed products 
+    for (const product of productsData) {
+        const vendor = await prisma.vendor.findFirst({
+            where: { 
+                user:{
+                    email:product.vendorEmail
+                }
+            },
+            include:{
+                user:true
+            }
+        });
+
+        const category = await prisma.category.findFirst({
+            where: {
+                name: product.category,
+                parentId: {
+                    not: null
+                }
+            }
+        });
+
+        if (!category || !vendor) {
+            console.warn(`⚠️ Skipping product ${product.name}: category or vendor not found`);
+            continue;
+        }
+
+        await prisma.product.upsert({
+            where: { slug: product.slug },
+            update: {},
+            create: {
+                name: product.name,
+                price: product.price,
+                sku: product.sku,
+                stock: product.stock,
+                status: product.status as ProductStatus,
+                isActive: product.isActive,
+                images: product.images,
+                categoryId: category.id,
+                vendorId: vendor.id,
+                slug: product.slug
+            }
+        });
+
+    }
+
+
+
 
 }
 

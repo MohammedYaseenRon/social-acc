@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useUserStore } from '@/store/userStore';
 
 const menu = [
     { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
@@ -30,39 +31,20 @@ const menu = [
 ];
 
 const layout: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [authorized, setAuthorized] = useState<boolean | null>(null);
     const router = useRouter();
+    const { user, loading } = useUserStore();
+
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            return router.push("/unauthorized");
+        if (!loading && (!user || user.role !== "VENDOR")) {
+            router.push("/unauthorized");
         }
+    }, [user, loading]);
 
-        const checkRole = async () => {
-            try {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                if (res.data.role === "VENDOR") {
-                    setAuthorized(true);
-                } else {
-                    router.push("/unauthorized");
-                }
-            } catch (err) {
-                router.push("/unauthorized");
-            }
-        };
-
-        checkRole();
-    }, []);
-
-    if (authorized === null) {
+    if (loading || !user) {
         return <div className="p-4">🔐 Checking access...</div>;
     }
+
     return (
         <div className='flex h-screen bg-gray-100'>
             <Sidebar menuItems={menu} />

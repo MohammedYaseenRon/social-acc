@@ -13,15 +13,22 @@ export const NavbarSearch = () => {
     const searchParams = new URLSearchParams();
     if (value.trim()) {
       searchParams.set("query", value);
+      router.push(`/products?${searchParams.toString()}`);
+
     }
 
-    router.push(`/products?${searchParams.toString()}`);
   }, 400);
 
   useEffect(() => {
-    debouncedSearch(query);
+    if (query.trim()) {
+      debouncedSearch(query);
+    }
     return () => debouncedSearch.cancel();
   }, [query]);
+
+  if (!pathname.startsWith("/") || pathname.startsWith("/admin") || pathname.startsWith("/superAdmin")) {
+    return null;
+  }
 
   return (
     <div className="relative">

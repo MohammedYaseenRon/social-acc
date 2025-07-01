@@ -11,6 +11,7 @@ import {
     Settings,
     User,
 } from 'lucide-react';
+import { useUserStore } from '@/store/userStore';
 
 const menu = [
     { path: '/superAdmin', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
@@ -19,45 +20,24 @@ const menu = [
 ];
 
 const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [authorized, setAuthorized] = useState<boolean | null>(null);
     const router = useRouter();
+    const {user, loading} = useUserStore(); 
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            return router.push("/unauthorized");
+        if(!loading  && (!user || user.role !== "ADMIN")) {
+            router.push("/unauthorized");
         }
+    }, [user, loading]);
 
-        const checkRole = async () => {
-            try {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                if (res.data.role === "ADMIN") {
-                    setAuthorized(true);
-                } else {
-                    router.push("/unauthorized");
-                }
-            } catch (err) {
-                router.push("/unauthorized");
-            }
-        };
-
-        checkRole();
-    }, []);
-
-    if (authorized === null) {
-        return <div className="p-4">🔐 Checking access...</div>;
+    if(loading || !user) {
+        return <div className='p-4'>Checking access...</div>
     }
-
+    
     return (
         <div className='flex h-screen bg-gray-100'>
             <Sidebar menuItems={menu} />
             <div className='flex-1 flex flex-col overflow-hidden'>
-                <Header />
+                <Header name='Store' />
                 <motion.main
                     className="flex-1 overflow-y-auto p-4"
                     initial={{ opacity: 0 }}
