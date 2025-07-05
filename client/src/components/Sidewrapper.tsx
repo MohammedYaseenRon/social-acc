@@ -2,8 +2,15 @@
 
 import { usePathname } from 'next/navigation';
 import { AppSidebar } from '@/components/Sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import {
+    Sheet,
+    SheetTrigger,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+} from "@/components/ui/sheet";
 import { Category } from '@/state/types';
+import { Menu } from 'lucide-react';
 
 export default function SidebarWrapper({ categories }: { categories: Category[] }) {
     const pathname = usePathname();
@@ -12,10 +19,8 @@ export default function SidebarWrapper({ categories }: { categories: Category[] 
     if (hideSidebar) return null;
 
     return (
-        <div className='w-[200px]'>
-            <SidebarProvider>
-                <AppSidebar categories={categories} />
-            </SidebarProvider>
+        <div>
+            <AppSidebar categories={categories} />
         </div>
     );
 }

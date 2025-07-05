@@ -51,7 +51,7 @@ export const ProductCard: React.FC<{ product: ProductProps }> = ({ product }) =>
 
 
   return (
-    <div className="w-[350px] h-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
+    <div className="group relative overflow-hidden border-0 rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative h-36 overflow-hidden bg-gray-100">
         <Image
           src={Array.isArray(product.images) ? product.images[0] : product.images}

@@ -3,8 +3,10 @@ import { Category } from "@/state/types";
 import SidebarWrapper from "@/components/Sidewrapper";
 import CartModal from "@/components/CartModal";
 import Header from "@/components/admin/Header";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/Sidebar";
 
-async function getCategories():Promise<Category[]> {
+async function getCategories(): Promise<Category[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
     cache: "no-store" // optional: prevents stale data
   });
@@ -19,19 +21,25 @@ export default async function ProductsLayout({
   const categories = await getCategories();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header name="Market Place"/>
-
-      <div className="flex flex-1">
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
         <SidebarWrapper categories={categories} />
-          <div className="flex-1 p-4 bg-gray-50 min-h-screen">
-            <AnimatedLayout>
-              {children}
-            </AnimatedLayout>
-          </div>
+        <div className="flex-1 flex flex-col">
+          <Header name="Market place" />
+          {/* Main content */}
+          <main className="flex-1 p-6">
+            <AnimatedLayout>{children}</AnimatedLayout>
+          </main>
+        </div>
+
+        {/* Cart Modal */}
+        <CartModal />
       </div>
-      <CartModal />
-    </div>
+    </SidebarProvider>
+
+
+
+
   );
 };
 

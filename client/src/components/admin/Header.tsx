@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useCartStore } from '@/store/cartStore';
 import CartIntializer from '../CartIntializer';
 import { NavbarSearch } from '../Search';
+import { SidebarTrigger } from '../ui/sidebar';
 
 type AdminProps = {
   name: string
@@ -21,34 +22,39 @@ const Header: React.FC<AdminProps> = ({ name }) => {
     <>
       <CartIntializer />
       <motion.header
-        className="bg-white z-20 shadow-sm border-b border-border h-16 flex justify-between items-center p-4"
+        className="sticky flex items-center justify-center top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"   
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div>
-          <h1 className="text-xl font-semibold">{name}</h1>
-        </div>
-
-        <NavbarSearch />
-
-        <div className="flex items-center space-x-3">
-          <div className='relative'>
-            <ShoppingCart size={24} className="text-gray-500 rounded-full hover:bg-gray-100" onClick={openCart} />
-            <span
-              className={`absolute -top-2 -right-2 text-white text-xs font-bold px-1.5 py-0.5 rounded-full transition-all duration-200
-    ${totalItems > 0 ? "bg-red-500" : "bg-gray-300"}`}
-            >
-              {totalItems}
-            </span>
-
+        <div className="container flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <SidebarTrigger />
+            <h1 className="text-base sm:text-lg lg:text-xl font-semibold">{name}</h1>
           </div>
 
-          <div className="relative">
-            <button className="p-2 rounded-full hover:bg-gray-100 relative">
-              <Bell size={20} className="text-gray-500" />
-              <span className="absolute top-0 right-0 bg-red-500 rounded-full w-2 h-2"></span>
-            </button>
+          <div className='hidden md:flex flex-1 max-w-md mx-8'>
+            <NavbarSearch />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className='relative'>
+              <ShoppingCart size={24} className="text-gray-500 rounded-full hover:bg-gray-100" onClick={openCart} />
+              <span
+                className={`absolute -top-2 -right-2 text-white text-xs font-bold px-1.5 py-0.5 rounded-full transition-all duration-200
+    ${totalItems > 0 ? "bg-red-500" : "bg-gray-300"}`}
+              >
+                {totalItems}
+              </span>
+
+            </div>
+
+            <div className="relative">
+              <button className="p-2 rounded-full hover:bg-gray-100 relative">
+                <Bell size={20} className="text-gray-500" />
+                <span className="absolute top-0 right-0 bg-red-500 rounded-full w-2 h-2"></span>
+              </button>
+            </div>
           </div>
         </div>
       </motion.header>

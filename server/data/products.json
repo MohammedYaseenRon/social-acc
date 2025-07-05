@@ -7,7 +7,7 @@
     "status": "INSTOCK",
     "isActive": true,
     "category": "E-books",
-    "images": ["https://via.placeholder.com/300x300?text=JS+Book"],
+    "images": ["https://res.cloudinary.com/dpmp1gdup/image/upload/v1751471288/Js_gdfjzy.png"],
     "vendorEmail": "apple012@gmail.com",
     "slug": "mastering-javascript"
   },
@@ -20,7 +20,7 @@
     "status": "INSTOCK",
     "isActive": true,
     "category": "Music",
-    "images": ["https://via.placeholder.com/300x300?text=Music+Pack"],
+    "images": ["https://res.cloudinary.com/dpmp1gdup/image/upload/v1751471415/sample_ocxcfb.jpg"],
     "vendorEmail": "mark01@gmail.com",
     "slug": "digital-music-studio-pack"
   },
@@ -33,7 +33,7 @@
     "status": "INSTOCK",
     "isActive": true,
     "category": "Jackets",
-    "images": ["https://via.placeholder.com/300x300?text=Leather+Jacket"],
+    "images": ["https://res.cloudinary.com/dpmp1gdup/image/upload/v1751471481/Jacket_dk34lh.jpg"],
     "vendorEmail": "mark01@gmail.com",
     "slug": "mens-leather-jacket"
   },
@@ -46,7 +46,7 @@
     "status": "OUT_OF_STOCK",
     "isActive": true,
     "category": "Chargers",
-    "images": ["https://via.placeholder.com/300x300?text=Fast+Charger"],
+    "images": ["https://res.cloudinary.com/dpmp1gdup/image/upload/v1751471522/Charger_tqgxef.jpg"],
     "vendorEmail": "apple012@gmail.com",
     "slug": "mobile-fast-charger"
   },
@@ -59,7 +59,7 @@
     "status": "INSTOCK",
     "isActive": true,
     "category": "E-books",
-    "images": ["https://via.placeholder.com/300x300?text=React+Native"],
+    "images": ["https://res.cloudinary.com/dpmp1gdup/image/upload/v1751471567/Ebook_t8u0ae.webp"],
     "vendorEmail": "apple012@gmail.com",
     "slug": "react-native-essentials"
   }

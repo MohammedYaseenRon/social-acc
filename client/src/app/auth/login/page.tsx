@@ -83,7 +83,7 @@ export default function Signup() {
                 } else if (user.role == "VENDOR") {
                     router.push("/admin");
                 } else {
-                    router.push("/")
+                    router.push("/products")
                 }
             }
 

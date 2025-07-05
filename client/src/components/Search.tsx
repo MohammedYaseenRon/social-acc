@@ -2,7 +2,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { debounce } from "lodash";
-import { SearchIcon } from "lucide-react";
+import { Search, SearchIcon } from "lucide-react";
 
 export const NavbarSearch = () => {
   const [query, setQuery] = useState("");
@@ -31,15 +31,16 @@ export const NavbarSearch = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <input
         type="text"
         placeholder="Search..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="py-2 pl-10 pr-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500 w-96"
+        className="pl-10 pr-4 border rounded-xl p-2"
       />
-      <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
     </div>
   );
 };
+ 

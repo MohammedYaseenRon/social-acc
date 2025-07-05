@@ -5,6 +5,7 @@ import { X, ShoppingCart, Trash2, Plus, Minus } from 'lucide-react';
 import { Button } from './ui/button';
 import { useCartStore } from '@/store/cartStore';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 
 const CartModal = () => {
@@ -17,7 +18,7 @@ const CartModal = () => {
   } = useCartStore();
 
   const [isVisible, setIsVisible] = useState<boolean>(false);
-
+  const router  = useRouter();
   // Handle animation states
   useEffect(() => {
     if (isOpen) {
@@ -56,6 +57,11 @@ const CartModal = () => {
     const newQuantity = Math.max(1, item.quantity + change);
     updateQuantity(itemId, newQuantity);
   };
+
+
+  const handleClick = () => {
+    router.push("/checkout");
+  }
 
   // Handle item removal
   const handleRemoveItem = (itemId: number): void => {
@@ -180,7 +186,7 @@ const CartModal = () => {
               <span>Total</span>
               <span>{formatCurrency(total)}</span>
             </div>
-            <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white">
+            <Button onClick={handleClick} className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white">
               Checkout
             </Button>
             <Button
