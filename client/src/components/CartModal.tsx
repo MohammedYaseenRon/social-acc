@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { useCartStore } from '@/store/cartStore';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 
 const CartModal = () => {
@@ -44,7 +45,7 @@ const CartModal = () => {
 
   // Calculate cart totals
   const subtotal = (cartItems ?? []).reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const shipping = subtotal > 0 ? 5.99 : 0;
+  const shipping = subtotal > 1000 ? 0 : 5.99;
   const total = subtotal + shipping;
 
   // Handle quantity updates
@@ -78,7 +79,7 @@ const CartModal = () => {
     >
       {/* Modal Content */}
       <div
-        className={`fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         onClick={(e) => e.stopPropagation()}
       >

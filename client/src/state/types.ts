@@ -53,14 +53,7 @@ export interface CartItem {
     id: number;
     productId: number;
     quantity: number;
-    product: {
-      id: number;
-      name: string;
-      price: number;
-      images?: string;
-      sku?: string
-      stock?: number
-    };
+    product: ProductProps
   }
 
 export interface Category {
@@ -70,6 +63,32 @@ export interface Category {
         id: number;
         name: string;
     }[];
+}
+
+
+export interface OrderItemPayload {
+    productId: number,
+    quantity:number,
+    price:number
+}
+
+export interface ShippingInfo {
+    name:string,
+    lastName:string,
+    email:string,
+    address:string,
+    city:string,
+    state:string,
+    zipcode:string
+}
+
+export interface OrderPayload {
+    userId: number,
+    vendorId:number,
+    totalAmount: number,
+    shippingFee: number,
+    orderItems:OrderItemPayload[],
+    shippingAddress: ShippingInfo,
 }
 
 

@@ -94,16 +94,37 @@ model Category {
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  userId      Int
-  totalAmount Float
-  status      OrderStatus @default(PENDING)
-  createdAt   DateTime    @default(now())
-  vendorId    Int
-  user        User        @relation(fields: [userId], references: [id])
-  vendor      Vendor      @relation(fields: [vendorId], references: [id])
-  orderItems  OrderItem[]
-  payment     Payment[]
+  id              Int          @id @default(autoincrement())
+  userId          Int
+  totalAmount     Float
+  shippingFee   Float?
+  discountAmount  Float?
+  couponCode      String?
+  shippingAddressId  Int  @unique
+  shippingAddress  ShippingInfo?  @relation(fields: [shippingAddressId], references: [id])
+  status          OrderStatus  @default(PENDING)
+  createdAt       DateTime     @default(now())
+  deliveredAt     DateTime?
+  shippedAt       DateTime?
+  cancelledAt     DateTime?
+  vendorId        Int
+  user            User         @relation(fields: [userId], references: [id])
+  vendor          Vendor       @relation(fields: [vendorId], references: [id])
+  orderItems      OrderItem[]
+  payment         Payment[]
+}
+
+model ShippingInfo {
+  id       Int    @id @default(autoincrement())
+  name     String
+  lastName String
+  email    String
+  address  String
+  city     String
+  state    String
+  zipcode  String
+  orderId  Int?    @unique
+  order    Order?
 }
 
 model OrderItem {

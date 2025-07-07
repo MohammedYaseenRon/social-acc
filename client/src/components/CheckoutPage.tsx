@@ -1,9 +1,35 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Button } from './ui/button'
+import { useCheckoutStore } from '@/store/checoutStore'
+
 
 const CheckoutPage = () => {
+  const [formData,setFormData] = useState({
+    name:"",
+    lastName:"",
+    email:"",
+    address:"",
+    city:"",
+    state:"",
+    zipcode:"",
+
+  });
+  const {setShippingInfo} =  useCheckoutStore();
+
+  const handleValueChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value } = e.target;
+    setFormData((prev) => ({...prev, [name]: value}));
+  }
+
+  const handleSubmit = () => {
+    setShippingInfo(formData);
+    console.log("shipping info saved", formData);
+  }
+
+
   return (
     <Card >
       <CardHeader className='flex items-center gap-2'>
@@ -22,8 +48,10 @@ const CheckoutPage = () => {
               type="name"
               id="name"
               name="name"
+              value={formData.name}
+              onChange={handleValueChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg h-12 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="0"
+              placeholder="John"
             />
           </div>
           <div className="space-y-2">
@@ -34,6 +62,8 @@ const CheckoutPage = () => {
               type="lastName"
               id="lastName"
               name="lastName"
+              value={formData.lastName}
+              onChange={handleValueChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg h-12 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Doe"
             />
@@ -47,6 +77,8 @@ const CheckoutPage = () => {
             type="email"
             id="email"
             name="email"
+            value={formData.email}
+              onChange={handleValueChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 h-12"
             placeholder="email"
           />
@@ -59,6 +91,8 @@ const CheckoutPage = () => {
             type="address"
             id="address"
             name="address"
+            value={formData.address}
+              onChange={handleValueChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 h-12"
             placeholder="address"
           />
@@ -72,6 +106,8 @@ const CheckoutPage = () => {
               type="city"
               id="city"
               name="city"
+              value={formData.city}
+              onChange={handleValueChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500  h-12 focus:border-blue-500"
               placeholder="city"
             />
@@ -84,6 +120,8 @@ const CheckoutPage = () => {
               type="state"
               id="state"
               name="state"
+              value={formData.state}
+              onChange={handleValueChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 h-12 focus:border-blue-500"
               placeholder="state"
             />
@@ -96,10 +134,17 @@ const CheckoutPage = () => {
               type="zipcode"
               id="zipcode"
               name="zipcode"
+              value={formData.zipcode}
+              onChange={handleValueChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 h-12"
               placeholder="zipcode"
             />
           </div>
+        </div>
+        <div className='flex items-end justify-end'>
+          <Button onClick={handleSubmit} className='w-24 h-10'>
+            Save
+          </Button>
         </div>
       </CardContent>
     </Card>
