@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const Payment = () => {
     return (
         <div>
-            <Card>
+            <Card className='py-6'>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">

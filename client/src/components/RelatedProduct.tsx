@@ -86,7 +86,7 @@ export default function RelatedProducts() {
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300 rounded-xl"
                 />
                 {product.badge && (
                   <div className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-semibold ${product.badge === 'Best Seller'

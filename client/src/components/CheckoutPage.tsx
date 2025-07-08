@@ -31,7 +31,7 @@ const CheckoutPage = () => {
 
 
   return (
-    <Card >
+    <Card className='py-6'>
       <CardHeader className='flex items-center gap-2'>
         <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
           1

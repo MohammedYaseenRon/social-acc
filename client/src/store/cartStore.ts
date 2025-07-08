@@ -104,7 +104,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     clearCart: async (userId: number) => {
         set({ isLoading: true, error: null });
         try {
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/cart/user/${userId}`);
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/cart/${userId}`);
             set({ items: [], isLoading: false });
         } catch (error) {
             set({ error: 'Failed to clear cart', isLoading: false });

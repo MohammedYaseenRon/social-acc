@@ -85,65 +85,83 @@ const Order = () => {
 
     //price
     const subtotal = (items ?? []).reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-    const shipping = subtotal > 4000 ?  0 : 5.99;
+    const shipping = subtotal > 4000 ? 0 : 5.99;
     const total = subtotal + shipping;
     return (
-        <Card>
+        <Card className='py-6'>
             <CardHeader>
                 <CardTitle className='text-base text-black font-medium'>Order summary</CardTitle>
             </CardHeader>
-            <CardContent>
-                {items.map((item) => (
-                    <div key={item.id} className='flex items-center gap-3 p-3 border rounded-lg mb-2'>
-                        <div>
-                            <Image src={Array.isArray(item.product.images) ? item.product.images[0] : item.product.images} alt='Order'
-                                objectFit="cover"
-                                width={100}
-                                height={100}
-                                className='w-16 h-16 rounded-xl'
-                            />
-                        </div>
+            <CardContent className='mb-4'>
 
-                        <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm truncate">{item.product.name}</h4>
-                            <div className='flex items-center gap-2 border rounded-sm mt-1 p-1'>
-                                <span className='text-xs mt-1 text-black font-bold'>{formatCurrency(item.product.price)}</span>
-                                <span className='text-xs mt-2 text-black font-bold'><X className='w-3 h-3' /></span>
-                                <Badge variant="outline" className="text-xs mt-1">
-                                    {item.quantity}
-                                </Badge>
-                                <span className='text-xs mt-2 text-black font-bold'>=</span>
-                                <span className='text-sm mt-1 text-black font-bold'>{formatCurrency(item.product.price * item.quantity)}</span>
+                {Object.entries(grouped).map(([vendorId, vendorItems]) => {
+                    const vendorSubtoal = vendorItems.reduce((sum, item) => sum + item.quantity * item.product.price, 0);
+                    const vendorShipping = vendorSubtoal > 4000 ? 0 : 5.99;
+                    const vendorTotal = vendorSubtoal + vendorShipping;
+                    return (
+                        <div key={vendorId} className='mb-6 border p-4 rounded-lg'>
+                            {vendorItems.map((item) => (
+                                <div key={item.id} className='flex items-center gap-3 p-3 border rounded-lg mb-2'>
+                                    <div>
+                                        <Image src={Array.isArray(item.product.images) ? item.product.images[0] : item.product.images} alt='Order'
+                                            objectFit="cover"
+                                            width={100}
+                                            height={100}
+                                            className='w-16 h-16 rounded-xl'
+                                        />
+                                    </div>
+
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="font-medium text-sm truncate">{item.product.name}</h4>
+                                        <div className='flex items-center gap-2 border rounded-sm mt-1 p-1'>
+                                            <span className='text-xs mt-1 text-black font-bold'>{formatCurrency(item.product.price)}</span>
+                                            <span className='text-xs mt-2 text-black font-bold'><X className='w-3 h-3' /></span>
+                                            <Badge variant="outline" className="text-xs mt-1">
+                                                {item.quantity}
+                                            </Badge>
+                                            <span className='text-xs mt-2 text-black font-bold'>=</span>
+                                            <span className='text-sm mt-1 text-black font-bold'>{formatCurrency(item.product.price * item.quantity)}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            ))}
+
+                            <div className='mt-3 text-sm'>
+                                <div className='flex justify-between'>
+                                    <span>SubTotal</span>
+                                    <span>{formatCurrency(vendorSubtoal)}</span>
+                                </div>
+                                {vendorShipping === 0 ? (
+                                    <p className="text-green-600 font-medium mt-1">You've unlocked free shipping!</p>
+                                ) : (
+                                    <div className="flex justify-between mt-1">
+                                        <span>Shipping</span>
+                                        <span>{formatCurrency(vendorShipping)}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between font-semibold border-t mt-2 pt-1">
+                                    <span>Total</span>
+                                    <span>{formatCurrency(vendorTotal)}</span>
+                                </div>
                             </div>
                         </div>
+                    )
 
-                    </div>
-
-                ))}
-                <div className="border rounded-lg p-4 mt-4">
-                    <div className="flex justify-between py-1">
-                        <span>Subtotal</span>
-                        <span>{formatCurrency(subtotal)}</span>
-                    </div>
-                    {subtotal >= 4000 ? (
-                        <p className="text-sm text-green-600 mt-2 font-medium">
-                            Youve unlocked free shipping!
-                        </p>
-                    ) : (
-                        <div className="flex justify-between py-1">
-                            <span>Shipping</span>
-                            <span>{formatCurrency(shipping)}</span>
+                })}
+                {(items.length > 0) ? (
+                    <div className='border rounded-lg p-4 mt-4'>
+                        <div className='flex justify-between text-sm'>
+                            <span>GrandTotal</span>
+                            <span>{formatCurrency(total)}</span>
                         </div>
-                    )}
-
-                    <div className="flex justify-between py-2 font-semibold text-lg border-t mt-2">
-                        <span>Total</span>
-                        <span>{formatCurrency(total)}</span>
+                        <div className='mt-3'>
+                            <Button onClick={handleOrder} className='w-full cursor-pointer hover:bg-gray-900'>Place Order</Button>
+                        </div>
                     </div>
-                </div>
-                <div className='mt-2'>
-                    <Button onClick={handleOrder} className='w-full cursor-pointer hover:bg-gray-900'>Place Order</Button>
-                </div>
+                ) : (
+                    <p>No items available</p>
+                )}
             </CardContent>
         </Card>
     )

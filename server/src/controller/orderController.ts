@@ -52,7 +52,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         if (order.shippingAddress) {
             order.shippingAddress.orderId = order.id;
         }
-        res.status(200).json({ message: "Order created successfully", order });
+        res.status(201).json({ message: "Order created successfully", order });
     } catch (error) {
         res.status(500).json({ message: "Internal server error while creating Orders" });
     }

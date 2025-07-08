@@ -162,14 +162,14 @@ export default function Signup() {
                         className="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl py-3 font-semibold hover:from-indigo-600 hover:to-blue-700 transition-all disabled:opacity-50"
                         disabled={loading}
                     >
-                        {loading ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : 'Log '}
+                        {loading ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : 'Sign In'}
                     </Button>
                 </form>
-
+ 
                 <div className="mt-4 text-center">
                     <p className="text-sm text-gray-600">
                         Don't have an account?{' '}
-                        <a href="/auth/signup" className="text-indigo-600 hover:underline font-medium">Regi</a>
+                        <a href="/auth/signup" className="text-indigo-600 hover:underline font-medium">Register</a>
                     </p>
                 </div>
             </CardContent>
