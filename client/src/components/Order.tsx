@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/userStore';
 
 const Order = () => {
-    const { items, clearCart } = useCartStore();
+    const { items } = useCartStore();
     const { user } = useUserStore();
     const { shippingInfo } = useCheckoutStore();
     const router = useRouter();
@@ -36,6 +36,7 @@ const Order = () => {
 
 
     const handleOrder = async () => {
+        const allOrderIds: number[] = [];
         for (const [vendorId, vendorItems] of Object.entries(grouped)) {
             const orderItems: OrderItemPayload[] = vendorItems.map((item) => ({
                 productId: item.productId,
@@ -64,8 +65,8 @@ const Order = () => {
                 const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, orderPayload);
                 if (response.status == 201) {
                     toast.success("Order created successfully");
-                    clearCart(user.id);
-                    router.push("/payment");
+                    allOrderIds.push(response.data.id);
+                    router.push(`/payment?orderIds=${allOrderIds.join(",")}`);
                 }
             } catch (error: any) {
                 console.log("Order Failed", error.response?.data || error.message);

@@ -6,6 +6,7 @@ import productRoutes from './routes/productRoutes';
 import categoryRoutes from './routes/categoryRoutes';
 import cartRoutes from './routes/cartRoutes';
 import orderRoutes from './routes/orderRoutes'
+import paymentRoutes from './routes/paymentRoutes'
 
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/cart', cartRoutes);
 app.use('/orders', orderRoutes);
+app.use("/payment", paymentRoutes)
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

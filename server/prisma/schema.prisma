@@ -108,10 +108,12 @@ model Order {
   shippedAt       DateTime?
   cancelledAt     DateTime?
   vendorId        Int
+  paymentId       Int?
   user            User         @relation(fields: [userId], references: [id])
   vendor          Vendor       @relation(fields: [vendorId], references: [id])
   orderItems      OrderItem[]
-  payment         Payment[]
+  payment         Payment?   @relation(fields: [paymentId], references: [id])
+
 }
 
 model ShippingInfo {
@@ -160,14 +162,13 @@ model CartItem {
 model Payment {
   id            Int           @id @default(autoincrement())
   userId        Int
-  orderId       Int
   amount        Float
   transactionId String?
   paymentMethod PaymentMethod
   paymentStatus PaymentStatus
   createdAt     DateTime      @default(now())
-  order         Order         @relation(fields: [orderId], references: [id])
   user          User          @relation(fields: [userId], references: [id])
+  order         Order[]
 }
 
 model Review {
