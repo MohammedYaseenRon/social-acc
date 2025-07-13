@@ -1,9 +1,9 @@
 import  { Router } from "express";
-import { createRazorOrder } from "../controller/paymentController";
+import { createRazorOrder, verify } from "../controller/paymentController";
 
 const router = Router();
 
 router.post("/create-order", createRazorOrder);
-
+router.post("/verify", verify);
 
 export default router;

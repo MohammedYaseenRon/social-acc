@@ -64,12 +64,16 @@ const Order = () => {
             try {
                 const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, orderPayload);
                 if (response.status == 201) {
-                    toast.success("Order created successfully");
-                    allOrderIds.push(response.data.id);
-                    router.push(`/payment?orderIds=${allOrderIds.join(",")}`);
+                    const orderId = response.data.order.id;
+                    allOrderIds.push(orderId);
                 }
             } catch (error: any) {
                 console.log("Order Failed", error.response?.data || error.message);
+            }
+
+            if (allOrderIds.length > 0) {
+                router.push(`/payment?orderIds=${allOrderIds.join(",")}`);
+                toast.success("All orders created successfully");
             }
 
 

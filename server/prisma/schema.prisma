@@ -196,6 +196,7 @@ enum PaymentMethod {
   DEBIT_CARD
   PAYPAL
   STRIPE
+  RAZORPAY
 }
 
 enum ProductStatus {
@@ -204,9 +205,11 @@ enum ProductStatus {
 }
 
 enum PaymentStatus {
+  PAID
   PENDING
   COMPLETED
   FAILED
+  SUCCESS
 }
 
 enum OrderStatus {
