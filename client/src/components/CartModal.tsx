@@ -6,7 +6,6 @@ import { Button } from './ui/button';
 import { useCartStore } from '@/store/cartStore';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 
 const CartModal = () => {

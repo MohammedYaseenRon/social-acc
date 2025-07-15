@@ -3,22 +3,13 @@ import axios from 'axios';
 import { ChevronDown, Plus, X } from 'lucide-react';
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 
-interface AddpageProps {
+
+interface FormData {
   name: string;
   category: string;
-  status: "Instock" | "Out of Stock";
+  status: "INSTOCK" | "OUT_OF_STOCK";
   price: number;
   image: string;
   sku: string;
@@ -36,8 +27,8 @@ interface CategoryProps {
   }[];
 }
 
-const Addpage: React.FC<AddpageProps> = () => {
-  const [formData, setFormData] = useState({
+const Addpage = () => {
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     category: "",
     status: "INSTOCK",

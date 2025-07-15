@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 
 
 export default function ProductsPage() {
-  const { products, total, setFilters, fetchProducts } = useProductStore();
+  const { products, fetchProducts } = useProductStore();
   const [category, setCategory] = useState('');
 
   const [sortBy, setSortBy] = useState('latest');
