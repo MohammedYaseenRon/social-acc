@@ -2,13 +2,11 @@
 
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Package, Plus, Filter, Search, Edit, Trash2, MoreHorizontal, Download, Eye, FileText, Film, Music, Code } from 'lucide-react';
+import { Package, Plus, Filter, Edit, Trash2, MoreHorizontal, Eye, FileText, Film, Music, Code } from 'lucide-react';
 import Link from 'next/link';
 import { useProductStore } from '@/store/productStore';
 import Image from 'next/image';
-import { useUserStore } from '@/store/userStore';
 import { NavbarSearch } from '@/components/Search';
-import { query } from 'express';
 import { useSearchParams } from 'next/navigation';
 
 
