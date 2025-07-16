@@ -80,7 +80,7 @@ const RecentOrder = () => {
             animate="show"
         >
             <div className='flex items-center justify-between mb-4'>
-                <h2 className='text-lg font-medium'>Recent Products</h2>
+                <h2 className='text-lg font-medium'>Recent Order</h2>
                 <span className='text-sm text-gray-500 cursor-pointer hover:border-b border-gray-400'>See all</span>
             </div>
             <div className='overflow-x-auto'>
