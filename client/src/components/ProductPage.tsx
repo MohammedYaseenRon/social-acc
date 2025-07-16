@@ -190,7 +190,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                         <div className="flex items-center space-x-2">
                             <span className="text-sm font-medium text-gray-600">Vendor:</span>
                             <span className="text-sm font-semibold text-gray-900">
-                                {product.vendor?.storeName || product.vendor?.name || "N/A"}
+                                {product.vendor?.storeName || "N/A"}
                             </span>
                         </div>
                     </motion.div>
