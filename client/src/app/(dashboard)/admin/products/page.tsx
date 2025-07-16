@@ -220,7 +220,7 @@ const ProductPage = () => {
                                         <div className="text-sm text-gray-500">{product.sales}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {product.vendor?.storeName}
+                                        {product.vendor?.storeName || "N/A"} 
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className='flex flex-col gap-1'>
