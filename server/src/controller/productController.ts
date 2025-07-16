@@ -66,6 +66,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
         res.status(201).json({ message: "Product added successfully", product });
     } catch (error: any) {
+        console.log("Error while creating", error)
         res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -73,27 +74,28 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
     try {
-        const {
-            query= "",
+        const { 
+            query = "",
             category,
             minPrice,
             maxPrice,
             sortBy,
             status,
             page: pageStr = "1",
-            limit: limitStr = "10"
+            limit: limitStr = "10",
+            vendorId: vendorIdParam
         } = req.query as Record<string, string>;
 
         const pageNum = Math.max(1, parseInt(pageStr, 10));
         const limitNum = Math.max(1, parseInt(limitStr, 10));
 
         const filters: any = {};
-        if(query) {
+        if (query) {
             filters.OR = [
-                {name: {contains: query, mode: "insensitive"}},
+                { name: { contains: query, mode: "insensitive" } },
                 {
-                    category:{
-                       name: {contains:query, mode: "insensitive"}
+                    category: {
+                        name: { contains: query, mode: "insensitive" }
                     }
                 }
 
@@ -121,7 +123,6 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
         if (status) {
             filters.status = status.toUpperCase();
         }
-
         const sortMap: Record<string, any> = {
             price_asc: { price: "asc" },
             price_desc: { price: "desc" },
@@ -129,6 +130,7 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
             name_desc: { name: "desc" },
             latest: { createdAt: "desc" }
         };
+
 
         const products = await prisma.product.findMany({
             where: filters,
@@ -146,14 +148,112 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
             take: limitNum
         });
 
-        const total =await prisma.product.count({
+        const total = await prisma.product.count({
             where: filters
         })
-        res.status(200).json({products, total});
+        res.status(200).json({ products, total });
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
     }
 }
+    export const getVendorProducts = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const vendor = await prisma.vendor.findUnique({
+                where: { userId: req.user!.id },      
+                select: { id: true },
+            });
+            if (!vendor){
+                res.status(404).json({ message: "Vendor profile not found" });
+                return;
+            }
+
+            const {
+                query = "",
+                category,
+                minPrice,
+                maxPrice,
+                sortBy,
+                status,
+                page: pageStr = "1",
+                limit: limitStr = "10",
+                vendorId: vendorIdParam
+            } = req.query as Record<string, string>;
+
+            const pageNum = Math.max(1, parseInt(pageStr, 10));
+            const limitNum = Math.max(1, parseInt(limitStr, 10));
+
+            const filters: any = {
+                vendorId:vendor.id
+            };
+            if (query) {
+                filters.OR = [
+                    { name: { contains: query, mode: "insensitive" } },
+                    {
+                        category: {
+                            name: { contains: query, mode: "insensitive" }
+                        }
+                    }
+
+                ]
+            }
+            if (category) {
+                const foundCategory = await prisma.category.findUnique({
+                    where: {
+                        name: category
+                    },
+                });
+
+                if (foundCategory) {
+                    filters.categoryId = foundCategory.id;
+                }
+            }
+
+            if (minPrice || maxPrice) {
+                filters.price = {};
+                if (minPrice) filters.price.gte = parseFloat(minPrice);
+                if (maxPrice) filters.price.lte = parseFloat(maxPrice);
+
+            }
+
+            if (status) {
+                filters.status = status.toUpperCase();
+            }
+            const sortMap: Record<string, any> = {
+                price_asc: { price: "asc" },
+                price_desc: { price: "desc" },
+                name_asc: { name: "asc" },
+                name_desc: { name: "desc" },
+                latest: { createdAt: "desc" }
+            };
+
+
+            const products = await prisma.product.findMany({
+                where: filters,
+                include: {
+                    category: true,
+                    vendor: {
+                        select: {
+                            id: true,
+                            storeName: true
+                        }
+                    }
+                },
+                orderBy: sortMap[sortBy || "latest"],
+                skip: (pageNum - 1) * limitNum,
+                take: limitNum
+            });
+
+            const total = await prisma.product.count({
+                where: filters
+            })
+            res.status(200).json({ products, total });
+        } catch (error) {
+            console.log("Error while getting vendor Products")
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
+
 
 export const getProductsById = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -171,6 +271,7 @@ export const getProductsById = async (req: Request, res: Response): Promise<void
         res.status(500).json({ message: "Internal server error" });
     }
 }
+
 
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -210,6 +311,8 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
 
         res.status(200).json({ message: "Product deleted successfully", product });
     } catch (error) {
+        console.log("Delete product error", error);
+
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -228,11 +331,11 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
             where: {
                 id: Number(id)
             },
-            include:{
-                parent:{
-                    select:{
-                        id:true,
-                        name:true,
+            include: {
+                parent: {
+                    select: {
+                        id: true,
+                        name: true,
                     }
                 }
             }
@@ -249,10 +352,10 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
             include: {
                 category: {
                     include: {
-                        parent:{
-                            select:{
-                                id:true,
-                                name:true
+                        parent: {
+                            select: {
+                                id: true,
+                                name: true
                             }
                         }
                     }

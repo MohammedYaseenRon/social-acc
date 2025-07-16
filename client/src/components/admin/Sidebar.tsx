@@ -4,25 +4,15 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
-    LayoutDashboard,
-    ShoppingCart,
-    Users,
-    Package,
-    Settings,
-    Wallet,
-    MessageSquare,
-    BarChart4,
-    Store,
+    
     ChevronLeft,
     ChevronRight,
-    HelpCircle,
     UserCircle2,
-    Bell,
     LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useUserStore } from '@/store/userStore';
 
 type MenuItem = {
     path: string;
@@ -34,17 +24,11 @@ type SidebarProps = {
     className?: string
     menuItems: MenuItem[]
 }
-type UserProps = {
-    id: number,
-    name: string,
-    email: string,
-    role: string
-}
 
 const Sidebar: React.FC<SidebarProps> = ({ className, menuItems }) => {
     const [collapsed, setCollapsed] = useState(false);
-    const [user, setUser] = useState<UserProps | null>(null);
     const router = useRouter();
+    const {user, clearUsers} = useUserStore();
 
     const sideBarVariants = {
         exPanded: {
@@ -56,29 +40,10 @@ const Sidebar: React.FC<SidebarProps> = ({ className, menuItems }) => {
         }
     }
     const handleLogout = () => {
-        // Remove token from local storage
         localStorage.removeItem("token");
+        clearUsers();
         router.push("/"); // Change this to your login route
     };
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) return;
-            try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-
-                });
-                setUser(response.data);
-            } catch (error) {
-                console.log("Error while getting your details", error);
-            }
-        }
-        fetchUser();
-    }, []);
 
 
     return (

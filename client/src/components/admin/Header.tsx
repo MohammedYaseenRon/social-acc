@@ -6,6 +6,7 @@ import { useCartStore } from '@/store/cartStore';
 import CartIntializer from '../CartIntializer';
 import { NavbarSearch } from '../Search';
 import { SidebarTrigger } from '../ui/sidebar';
+import { usePathname } from 'next/navigation';
 
 type AdminProps = {
   name: string
@@ -14,6 +15,8 @@ type AdminProps = {
 const Header: React.FC<AdminProps> = ({ name }) => {
   const { items, openCart } = useCartStore();
   const totalItems = (items ?? []).reduce((acc, item) => acc + item.quantity, 0);
+  const pathname = usePathname();
+
 
 
 
@@ -22,7 +25,7 @@ const Header: React.FC<AdminProps> = ({ name }) => {
     <>
       <CartIntializer />
       <motion.header
-        className="sticky flex items-center justify-center top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"   
+        className="sticky flex items-center justify-center top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -33,9 +36,11 @@ const Header: React.FC<AdminProps> = ({ name }) => {
             <h1 className="text-base sm:text-lg lg:text-xl font-semibold">{name}</h1>
           </div>
 
-          <div className='hidden md:flex flex-1 max-w-md mx-8'>
-            <NavbarSearch />
-          </div>
+          {pathname !== "/admin/products" && (
+            <div className='hidden md:flex flex-1 max-w-md mx-8'>
+              <NavbarSearch />
+            </div>
+          )}
 
           <div className="flex items-center gap-4">
             <div className='relative'>

@@ -32,14 +32,19 @@ export interface ProductProps {
     price: number
     sku: string
     stock: number
+    isActive?:boolean
     images: string[] | string
-    status: "INSTOCK" | "OUTOFSTOCK"
+    status: "INSTOCK" | "OUT_OF_STOCK"
     createdAt: string
     vendorId: number
     categoryId: number
     category?: {
         id: number
         name: string
+    }
+    vendor?:{
+        id:number,
+        storeName:string
     }
     [key: string]: any
 }

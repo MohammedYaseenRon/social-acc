@@ -1,4 +1,3 @@
-// CartModal.tsx
 "use client";
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingCart, Trash2, Plus, Minus } from 'lucide-react';

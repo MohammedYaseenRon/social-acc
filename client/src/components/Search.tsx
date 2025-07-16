@@ -1,34 +1,41 @@
 "use client";
-import { useRouter, usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState, useMemo } from "react";
 import { debounce } from "lodash";
-import { Search, SearchIcon } from "lucide-react";
+import { Search } from "lucide-react";
 
 export const NavbarSearch = () => {
-  const [query, setQuery] = useState("");
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const debouncedSearch = debounce((value: string) => {
-    const searchParams = new URLSearchParams();
-    if (value.trim()) {
-      searchParams.set("query", value);
-      router.push(`/products?${searchParams.toString()}`);
+  const [query, setQuery] = useState(searchParams.get("query") || "");
+ 
+  const debouncedSearch = useMemo(() => 
+    debounce((value: string) => {
+      const currentQuery = searchParams.get("query") || "";
 
-    }
-
-  }, 400);
+      if (value.trim() !== currentQuery) {
+        const newParams = new URLSearchParams();
+        if (value.trim()) {
+          newParams.set("query", value.trim());
+          router.push(`${pathname}?${newParams.toString()}`);
+        } else {
+          router.push(pathname); 
+        }
+      }
+    }, 400)
+  , [searchParams, pathname, router]);
 
   useEffect(() => {
-    if (query.trim()) {
-      debouncedSearch(query);
-    }
+    debouncedSearch(query);
     return () => debouncedSearch.cancel();
   }, [query]);
 
-  if (!pathname.startsWith("/") || pathname.startsWith("/admin") || pathname.startsWith("/superAdmin")) {
-    return null;
-  }
+  useEffect(() => {
+    const urlQuery = searchParams.get("query") || "";
+    setQuery(urlQuery);
+  }, [searchParams]);
 
   return (
     <div className="relative w-full">
@@ -43,4 +50,3 @@ export const NavbarSearch = () => {
     </div>
   );
 };
- 

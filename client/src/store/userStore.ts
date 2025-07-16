@@ -5,6 +5,7 @@ import { create } from "zustand"
 interface UserStore {
     user: UserProps | null
     loading: boolean
+    initialized: boolean
     error: string | null
     fetchUsers: () => Promise<void>
     setUser: (user: UserProps) => void
@@ -14,7 +15,8 @@ interface UserStore {
 
 export const useUserStore = create<UserStore>((set) => ({
     user: null,
-    loading: false,
+    loading: true,
+    initialized: false,
     error: null,
 
     fetchUsers: async () => {
@@ -22,7 +24,7 @@ export const useUserStore = create<UserStore>((set) => ({
 
         const token = localStorage.getItem("token");
         if (!token) {
-            set({ loading: false })
+            set({ loading: false, })
             return
         }
 
@@ -33,10 +35,10 @@ export const useUserStore = create<UserStore>((set) => ({
                 },
 
             });
-            set({ user: response.data, loading: false })
+            set({ user: response.data, loading: false, initialized: true })
         } catch (error) {
             console.log("Error while getting your details", error);
-            set({ error: "Failed to fetch users", loading: false })
+            set({ user: null, loading: false, initialized: true, error: "Auth failed" });
         }
     },
 

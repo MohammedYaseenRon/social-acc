@@ -1,84 +1,16 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Package, Plus, Filter, Search, Edit, Trash2, MoreHorizontal, Download, Eye,FileText,Film,Image,Music,Code } from 'lucide-react';
+import { Package, Plus, Filter, Search, Edit, Trash2, MoreHorizontal, Download, Eye, FileText, Film, Music, Code } from 'lucide-react';
 import Link from 'next/link';
+import { useProductStore } from '@/store/productStore';
+import Image from 'next/image';
+import { useUserStore } from '@/store/userStore';
+import { NavbarSearch } from '@/components/Search';
+import { query } from 'express';
+import { useSearchParams } from 'next/navigation';
 
-const mockProducts = [
-    {
-        id: 1,
-        name: 'Premium UI Kit Bundle',
-        image: '/placeholder.svg',
-        type: 'Design Template',
-        category: 'UI Kits',
-        price: '$49.99',
-        sales: 128,
-        vendor: 'DesignCo',
-        status: 'active',
-        format: 'file'
-    },
-    {
-        id: 2,
-        name: 'JavaScript Course 2023',
-        image: '/placeholder.svg',
-        type: 'Course',
-        category: 'Programming',
-        price: '$89.99',
-        sales: 97,
-        vendor: 'CodeMasters',
-        status: 'active',
-        format: 'video'
-    },
-    {
-        id: 3,
-        name: 'Stock Photo Collection',
-        image: '/placeholder.svg',
-        type: 'Media',
-        category: 'Photography',
-        price: '$29.99',
-        sales: 215,
-        vendor: 'PixelPerfect',
-        status: 'active',
-        format: 'image'
-    },
-    {
-        id: 4,
-        name: 'Marketing eBook Bundle',
-        image: '/placeholder.svg',
-        type: 'eBook',
-        category: 'Marketing',
-        price: '$19.99',
-        sales: 63,
-        vendor: 'MarketPro',
-        status: 'pending',
-        format: 'document'
-    },
-    {
-        id: 5,
-        name: 'Podcast Series: Growth Hacking',
-        image: '/placeholder.svg',
-        type: 'Audio',
-        category: 'Business',
-        price: '$24.99',
-        sales: 42,
-        vendor: 'GrowthGurus',
-        status: 'active',
-        format: 'audio'
-    },
-    {
-        id: 6,
-        name: 'ReactJS Component Library',
-        image: '/placeholder.svg',
-        type: 'Code',
-        category: 'Web Development',
-        price: '$39.99',
-        sales: 87,
-        vendor: 'CodeCrafters',
-        status: 'active',
-        format: 'code'
-    },
-];
 
 const getFormatIcon = (format: string) => {
     switch (format) {
@@ -86,8 +18,6 @@ const getFormatIcon = (format: string) => {
             return <Package size={16} />;
         case 'video':
             return <Film size={16} />;
-        case 'image':
-            return <Image size={16} />;
         case 'document':
             return <FileText size={16} />;
         case 'audio':
@@ -101,23 +31,42 @@ const getFormatIcon = (format: string) => {
 
 const ProductPage = () => {
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+    const { products, loading, error, fetchVendorProducts, updateProduct } = useProductStore();
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
 
-    const toggleProductSelection = (id:number) => {
-        if(selectedProducts.includes(id)) {
+    const searchParams = useSearchParams();
+    const query = searchParams.get("query") || "";
+
+    const handleArchieve = (id: number) => {
+        updateProduct(id, {
+            isActive: false
+        });
+    }
+    const toggleProductSelection = (id: number) => {
+        if (selectedProducts.includes(id)) {
             setSelectedProducts(selectedProducts.filter(productId => productId !== id))
-        }else{
+        } else {
             setSelectedProducts([...selectedProducts, id])
 
         }
     }
 
     const selectAllProducts = () => {
-        if(selectedProducts.length === mockProducts.length) {
+        if (selectedProducts.length === products.length) {
             setSelectedProducts([])
-        }else{
-            setSelectedProducts(mockProducts.map(product => product.id));
+        } else {
+            setSelectedProducts(products.map(product => product.id));
         }
     }
+
+    useEffect(() => {
+        fetchVendorProducts({ query, page, limit });
+    }, [query, page]);
+
+    if (loading) return <p>Loading…</p>;
+    if (error) return <p>{error}</p>;
+
 
     return (
         <div className='flex flex-col'>
@@ -151,13 +100,8 @@ const ProductPage = () => {
                 transition={{ duration: 0.3, delay: 0.1 }}
                 className="bg-white rounded-xl shadow-sm border border-border mb-6 p-4">
                 <div className='flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0 overflow-x-auto'>
-                    <div className='w-full relative md:w-80'>
-                        <input
-                            type="text"
-                            placeholder="Search products..."
-                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                        />
-                        <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
+                    <div className='max-w-md mx-8'>
+                        <NavbarSearch />
                     </div>
                     <div>
                         <div className="flex items-center space-x-2">
@@ -204,7 +148,7 @@ const ProductPage = () => {
                                         <input
                                             type="checkbox"
                                             className="h-4 w-4 text-brand-500 border-gray-300 rounded"
-                                            checked={selectedProducts.length === mockProducts.length && mockProducts.length > 0}
+                                            checked={selectedProducts.length === products.length && products.length > 0}
                                             onChange={selectAllProducts}
                                         />
                                     </div>
@@ -233,8 +177,9 @@ const ProductPage = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {mockProducts.map((product) => (
-                                <tr key={product.id} className="hover:bg-gray-50">
+
+                            {products.map((product) => (
+                                <tr key={product.id} className={`hover:bg-gray-50 ${!product.isActive ? "opacity-50" : ""}`}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
                                             <input
@@ -247,8 +192,14 @@ const ProductPage = () => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
-                                            <div className="flex-shrink-0 h-10 w-10 relative">
-                                                <img className="h-10 w-10 rounded-md object-cover" src={product.image} alt="" />
+                                            <div className="relative">
+                                                <Image src={Array.isArray(product.images) ? product.images[0] : product.images}
+                                                    alt='Product'
+                                                    objectFit="cover"
+                                                    width={20}
+                                                    height={20}
+                                                    className='w-16 h-16 rounded-xl'
+                                                />
                                                 <div className="absolute top-0 right-0 -mr-1 -mt-1 bg-white rounded-full p-0.5 shadow">
                                                     <div className="bg-gray-100 rounded-full p-1">
                                                         {getFormatIcon(product.format)}
@@ -257,7 +208,7 @@ const ProductPage = () => {
                                             </div>
                                             <div className="ml-4">
                                                 <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                                                <div className="text-xs text-gray-500">{product.category}</div>
+                                                <div className="text-xs text-gray-500">{product.category?.name}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -271,13 +222,22 @@ const ProductPage = () => {
                                         <div className="text-sm text-gray-500">{product.sales}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {product.vendor}
+                                        {product.vendor?.storeName}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 text-xs rounded-full capitalize ${product.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                                            }`}>
-                                            {product.status}
-                                        </span>
+                                        <div className='flex flex-col gap-1'>
+                                            <span className={`px-2 py-1 text-xs rounded-full capitalize 
+                                            ${product.status === 'INSTOCK' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                                }`}>
+                                                {product.status === 'INSTOCK' ? 'In Stock' : 'Out of Stock'}
+                                            </span>
+                                            {!product.isActive && (
+                                                <span className='px-2 py-1 text-xs rounded-full bg-red-100 text-red-800'>
+                                                    Archived
+                                                </span>
+                                            )}
+
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div className="flex justify-end space-x-2">
@@ -287,7 +247,7 @@ const ProductPage = () => {
                                             <button className="p-1 text-gray-400 hover:text-brand-500">
                                                 <Edit size={18} />
                                             </button>
-                                            <button className="p-1 text-gray-400 hover:text-red-500">
+                                            <button onClick={() => handleArchieve(product.id)} className="p-1 text-gray-400 hover:text-red-500">
                                                 <Trash2 size={18} />
                                             </button>
                                             <button className="p-1 text-gray-400 hover:text-gray-700">
@@ -302,28 +262,28 @@ const ProductPage = () => {
                 </div>
 
                 <div className="px-6 py-4 border-t border-gray-200">
-                    <div className="flex flex-col md:flex-row gap-2 justify-between items-center">
-                        <div className="text-sm text-gray-500">
-                            Showing <span className="font-medium">1</span> to <span className="font-medium">6</span> of <span className="font-medium">12</span> products
-                        </div> 
+                    <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
+                        {products && products.length > 0 && (
+                            <div className="flex space-x-2">
+                                <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1} className="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50 disabled:opacity-50">
+                                    Previous
+                                </button>
+                                <span>{page}</span>
+                                <button onClick={() => setPage((prev) => prev + 1)} className="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50">
+                                    Next
+                                </button>
+                            </div>
+                        )}
+                        {products && products.length === 0 && (
+                            <div className="text-center py-12 text-gray-500 text-lg">
+                                No products found.
+                            </div>
+                        )}
 
-                        <div className="flex space-x-2">
-                            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50 disabled:opacity-50" disabled>
-                                Previous
-                            </button>
-                            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm bg-blue-500 text-white hover:bg-brand-600">
-                                1
-                            </button>
-                            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50">
-                                2
-                            </button>
-                            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50">
-                                Next
-                            </button>
-                        </div>
                     </div>
                 </div>
             </motion.div>
+
         </div>
     )
 }

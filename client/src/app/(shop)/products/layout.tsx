@@ -4,7 +4,6 @@ import SidebarWrapper from "@/components/Sidewrapper";
 import CartModal from "@/components/CartModal";
 import Header from "@/components/admin/Header";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/Sidebar";
 
 async function getCategories(): Promise<Category[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
