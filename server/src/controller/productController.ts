@@ -248,7 +248,6 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
             })
             res.status(200).json({ products, total });
         } catch (error) {
-            console.log("Error while getting vendor Products")
             res.status(500).json({ message: "Internal server error" });
         }
     }
@@ -311,7 +310,6 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
 
         res.status(200).json({ message: "Product deleted successfully", product });
     } catch (error) {
-        console.log("Delete product error", error);
 
         res.status(500).json({ message: "Internal server error" });
     }
@@ -371,7 +369,6 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
             products
         });
     } catch (error) {
-        console.log("Error while getting products by category", error)
         res.status(500).json({ message: "Server error while getting prodcts by category" });
     }
 }
@@ -379,17 +376,13 @@ export const getProductsByCategory = async (req: Request, res: Response): Promis
 export const getProductsBySlug = async (req: Request, res: Response): Promise<void> => {
     const { slug } = req.params;
 
-    console.log("🧩 Fetching product with slug:", slug);
 
-    // Validate slug parameter
     if (!slug || typeof slug !== 'string') {
-        console.log("⚠️ Invalid slug parameter");
         res.status(400).json({ message: "Invalid slug parameter" });
         return;
     }
 
     try {
-        console.log("🔍 Starting database query for slug:", slug);
 
         const product = await prisma.product.findUnique({
             where: {
@@ -404,14 +397,11 @@ export const getProductsBySlug = async (req: Request, res: Response): Promise<vo
         console.log("🔍 Query completed. Product found:", !!product);
 
         if (!product) {
-            console.log("⚠️ Product not found for slug:", slug);
             res.status(404).json({ message: "Product not found" });
             return;
         }
 
-        console.log("✅ Product found:", product.name);
         res.status(200).json(product);
-        console.log("✅ Response sent successfully");
 
     } catch (error) {
         res.status(500).json({

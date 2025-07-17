@@ -56,7 +56,6 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
         }
         res.status(200).json({ message: "Item added to cart" });
     } catch (error) {
-        console.error("Add to cart error", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -87,7 +86,6 @@ export const getCart = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json(cart);
 
     } catch (error) {
-        console.error("Get cart error", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -107,7 +105,6 @@ export const updateCartItem = async (req: Request, res: Response): Promise<void>
         });
         res.status(200).json({ message: "Cart item updated",updateItem });
     } catch (error) {
-        console.error("Get cartItem update error", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -122,7 +119,6 @@ export const removeCartItem = async (req: Request, res: Response): Promise<void>
         });
         res.status(200).json({ message: "Successfully removed a item from cart", cartItem });
     } catch (error) {
-        console.error("Remove cart item error", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -147,7 +143,6 @@ export const clearCart = async (req: Request, res: Response): Promise<void> => {
         });
         res.status(200).json({ message: "Removed all Items from cart" });
     } catch (error) {
-        console.error("Clear cart error", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }

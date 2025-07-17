@@ -54,7 +54,6 @@ export const RegisterUser = async (req: Request, res: Response): Promise<void> =
         )
         res.status(201).json({ message: "User created successfully", token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (error) {
-        console.log("Error in creating user", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -91,7 +90,6 @@ export const LoginUser = async (req: Request, res: Response): Promise<void> => {
         }, JWT_SECRET, { expiresIn: "1d" });
         res.status(200).json({ message: "User logged in successfully", token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (error) {
-        console.log("Error in login user", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -188,10 +186,8 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 //Vendor auth 
 
 export const RequestVendorAccess = async (req: Request, res: Response): Promise<void> => {
-    console.log("Vendor request route hit");
-    console.time("Vendor request time");
+   
     const userId = req.user?.id;
-    console.log("Vendor request started for user:", userId);
     if (!userId) {
         res.status(400).json({ error: "User ID not found in request" });
         return;
@@ -228,7 +224,6 @@ export const RequestVendorAccess = async (req: Request, res: Response): Promise<
 
         res.status(201).json({ message: "Vendor request submitted.", request });
     } catch (error) {
-        console.error("Vendor request error:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 }
@@ -256,7 +251,6 @@ export const getAllVendorRequest = async (req: Request, res: Response): Promise<
         });
         res.status(200).json(vendorRequest);
     } catch (error) {
-        console.error("Error fetching vendor requests", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -295,7 +289,6 @@ export const updateVendorRequest = async (req: Request, res: Response): Promise<
 
         res.status(200).json({ message: `Request ${status.toLowerCase()} successfully`, updateRequest });
     } catch (error) {
-        console.error("Error updating vendor request:", error);
         res.status(500).json("Error while updating status");
     }
 }
@@ -330,7 +323,6 @@ export const updateVendorProfile = async (req: Request, res: Response): Promise<
 
         res.status(200).json({ message: "Vendor profile updated successfully", updatedVendor });
     } catch (error) {
-        console.error("Error updating vendor profile:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -365,7 +357,6 @@ export const createVendorProfile = async (req: Request, res: Response): Promise<
 
         res.status(201).json({ message: "Vendor profile created successfully", newVendor });
     } catch (error) {
-        console.error("Error creating vendor profile:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };

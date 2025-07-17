@@ -49,7 +49,6 @@ export const createCategory = async (req: Request, res: Response) => {
         });
         return res.status(201).json({ message: "Category created successfully", category });
     } catch (error) {
-        console.log("Internal server error", error);
         res.status(500).json({ message: "Failed to fetch categories" });
 
     }

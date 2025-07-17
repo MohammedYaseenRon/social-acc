@@ -4,9 +4,7 @@ import { Request, Response } from "express";
 const prisma = new PrismaClient();
 
 export const SearchProduct = async (req: Request, res: Response): Promise<void> => {
-
     try {
-
         //query
         const {
             query = "",
