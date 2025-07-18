@@ -1,7 +1,7 @@
 import { PrismaClient, ProductStatus } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
-import productsData from  '../data/products.json'
+import productsData from '../data/products.json'
 
 const prisma = new PrismaClient();
 
@@ -88,17 +88,52 @@ export async function main() {
     } else {
         console.log(" SuperAdmin already exists");
     }
+    // 2. SuperAdmin creation block
+
+
+    // ✅ 3. Vendor users and vendors creation
+    const vendorsToSeed = [
+        { name: "Apple Store", email: "apple012@gmail.com" },
+        { name: "MarkTech", email: "mark01@gmail.com" }
+    ];
+
+    for (const { name, email } of vendorsToSeed) {
+        let vendorUser = await prisma.user.findFirst({ where: { email } });
+
+        if (!vendorUser) {
+            vendorUser = await prisma.user.create({
+                data: {
+                    name,
+                    email,
+                    password: await bcrypt.hash("vendor123", 10),
+                    role: "VENDOR",
+                },
+            });
+        }
+
+        const existingVendor = await prisma.vendor.findFirst({ where: { userId: vendorUser.id } });
+
+        if (!existingVendor) {
+            await prisma.vendor.create({
+                data: {
+                    storeName: name,
+                    userId: vendorUser.id,
+                },
+            });
+        }
+    }
+
 
     //Seed products 
     for (const product of productsData) {
         const vendor = await prisma.vendor.findFirst({
-            where: { 
-                user:{
-                    email:product.vendorEmail
+            where: {
+                user: {
+                    email: product.vendorEmail
                 }
             },
-            include:{
-                user:true
+            include: {
+                user: true
             }
         });
 
